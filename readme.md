@@ -10,16 +10,16 @@ Kodea nagusia org/ehu karpetan kokatzen da. Bertan, gomendatzaileak behar dituen
 
 - Http zerbitzari bat (nanoHttpD oinarritua)
 - Datu base zerbitzu bat (mongodb-en oinarriuta)
-- Ezagupen inferentzia eta gomendio sistema implementazioa (oraingo inferentzia sinplea, egiteke gomendio sistema)
+- Ezagupen inferentzia eta gomendio sistema implementazioa (oraingoz inferentzia sinplea, egiteke gomendio sistema)
 
 Libs/ karpetan erabilitako liburutegia daude. Hauek Java 8-ren kontra konpilatuak daudenez, java 8 erabiltzea komeni da.
-resources/ karpetan webzerbitzariak behar dituen fitxategia estatikoa gordtzeko erabiltzen da.
-docs/ karpetan garapen honen oinarrian dago teoria kokatzen da.
+resources/ karpetan webzerbitzariak behar dituen fitxategi estatikoa gordetzeko erabiltzen da.
+docs/ karpetan garapen honen atzean dagoen teoria kokatzen da.
 
 
 # Martxan jartzeko
 
-Besterik gabe,
+Besterik gabe, behin java 8 instalatua izan ostean:
 
 ```bash
 
