@@ -9,7 +9,7 @@ bere ezagupen arabera gomendioak jasoko ditu jakintza egokia izan arte.
 Kodea nagusia org/ehu karpetan kokatzen da. Bertan, gomendatzaileak behar dituen logika txertatu dira:
 
 - Http zerbitzari bat (nanoHttpD oinarritua)
-- Datu base zerbitzu bat (mongodb-en oinarriuta)
+- Datu base zerbitzu bat (mongodb 3.4-en oinarrituta)
 - Ezagupen inferentzia eta gomendio sistema implementazioa (oraingoz inferentzia sinplea, egiteke gomendio sistema)
 
 Libs/ karpetan erabilitako liburutegia daude. Hauek Java 8-ren kontra konpilatuak daudenez, java 8 erabiltzea komeni da.
