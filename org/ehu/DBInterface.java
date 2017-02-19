@@ -1,23 +1,34 @@
 package org.ehu;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BulkWriteOperation;
-import com.mongodb.BulkWriteResult;
-import com.mongodb.Cursor;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+
 import com.mongodb.MongoClient;
-import com.mongodb.ParallelScanOptions;
+import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
-public class DBInterface {
-  DBCollection student;
-  DBCollection studentSkills;
+
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import java.util.Arrays;
+import com.mongodb.Block;
+
+import com.mongodb.client.MongoCursor;
+import static com.mongodb.client.model.Filters.*;
+import com.mongodb.client.result.DeleteResult;
+import static com.mongodb.client.model.Updates.*;
+import com.mongodb.client.result.UpdateResult;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public  class DBInterface {
+  MongoCollection<Document> student;
+  MongoCollection<Document> studentSkills;
 
   public DBInterface(){
     try {
       MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
-      DB db = mongoClient.getDB( "mydb" );
+      MongoDatabase db = mongoClient.getDatabase("mydb");
       System.out.println("Connected to DB");
       student = db.getCollection("student");
       studentSkills = db.getCollection("StudentSkills");
@@ -41,20 +52,21 @@ BasicDBObject updateCommand = new BasicDBObject("$push", new BasicDBObject("item
 
 myColl.update(updateQuery, updateCommand);
 System.out.println(myColl.findOne().toString());*/
-  BasicDBObject doc = new BasicDBObject("id", "std01")
+  Document doc = new Document("id", "std01")
       .append("name", "iñigo tamayo")
       .append("skills", "multiplication")
-      .append("correct", 0);
-  studentSkills.insert(doc);
+      .append("correct", 0)
+      .append("pknown", 0.3);
+  studentSkills.insertOne(doc);
   this.prinStudentsData();
   return 1;
 }
 public void prinStudentsData (){
   Bkt bkt = new Bkt();
-  DBCursor cursor = studentSkills.find();
+  MongoCursor<Document> cursor = studentSkills.find().iterator();
     try {
        while(cursor.hasNext()) {
-           DBObject c = cursor.next();
+           Document c = cursor.next();
           // System.out.println(cursor);
            System.out.println(c.get("correct"));
            boolean correct = false;
@@ -69,5 +81,41 @@ public void prinStudentsData (){
     } finally {
        cursor.close();
     }
+}
+/*
+  Get student info by id
+*/
+public String getStudent (String id){
+  System.out.println("gettin student "+id);
+  String tnp = new String("");
+  Document query = new Document();
+  query.put("_id", new ObjectId(id));
+  MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+    try {
+       while(cursor.hasNext()) {
+           Document c = cursor.next();
+           System.out.println(c);
+           tnp = c.toString();
+
+
+       }
+    } finally {
+       cursor.close();
+    }
+    return tnp;
+}
+
+/* add or update
+   Student skill known
+*/
+public String addSkillStudent (String id,String skill,Double pknow){
+  System.out.println("adding skill student "+id);
+  String tnp = new String("");
+  Document query = new Document();
+  query.put("_id", new ObjectId(id));
+  query.put("skills", skill);
+  studentSkills.updateOne(query,new Document("$set", new Document("pknown", pknow)));
+  System.out.println("updating know of student");
+  return tnp;
 }
 }

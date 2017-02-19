@@ -58,12 +58,57 @@ import org.nanohttpd.router.RouterNanoHTTPD.StaticPageHandler;
 import org.nanohttpd.router.RouterNanoHTTPD.UriResource;
 import org.nanohttpd.router.RouterNanoHTTPD.UriResponder;
 import org.nanohttpd.util.ServerRunner;
+import org.ehu.DBInterface;
 
 public class HttpServer extends RouterNanoHTTPD {
 
-    private static final int PORT = 8080;
+        private static final int PORT = 8080;
+        private DBInterface dbi = new DBInterface();
+        public static class StudentSkillHandler extends DefaultHandler {
 
-    public static class UserHandler extends DefaultHandler {
+            @Override
+            public String getText() {
+                return "not implemented";
+            }
+
+            public String getText(Map<String, String> urlParams, IHTTPSession session) {
+                String text = new String("");
+
+                for (Map.Entry<String, String> entry : urlParams.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    text += "<div> Param: " + key + "&nbsp;Value: " + value + "</div>";
+                }
+              /*  text += "<h1>Query parameters:</h1>";
+                for (Map.Entry<String, String> entry : session.getParms().entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    text += "<div> Query Param: " + key + "&nbsp;Value: " + value + "</div>";
+                }
+                text += "</body></html>";*/
+
+                return text;
+            }
+
+            @Override
+            public String getMimeType() {
+                return "text/html";
+            }
+
+            @Override
+            public IStatus getStatus() {
+                return Status.OK;
+            }
+
+            public Response get(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+                String text = getText(urlParams, session);
+                ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
+                int size = text.getBytes().length;
+                return Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+            }
+
+        }
+    public static class StudentHandler extends DefaultHandler {
 
         @Override
         public String getText() {
@@ -71,24 +116,32 @@ public class HttpServer extends RouterNanoHTTPD {
         }
 
         public String getText(Map<String, String> urlParams, IHTTPSession session) {
-            String text = "<html><body>User handler. Method: " + session.getMethod().toString() + "<br>";
-            text += "<h1>Uri parameters:</h1>";
+            DBInterface dbi = new DBInterface();
+            String text = "";
             for (Map.Entry<String, String> entry : urlParams.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                text += "<div> Param: " + key + "&nbsp;Value: " + value + "</div>";
+                System.out.println(key);
+                if (key.equals("id")){
+                  System.out.println("key student");
+                  text = dbi.getStudent(value);
+                  dbi.addSkillStudent("58a9ee1e07f4183ecf602058","multiplication",0.5);
+                }
             }
-            text += "<h1>Query parameters:</h1>";
             for (Map.Entry<String, String> entry : session.getParms().entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                text += "<div> Query Param: " + key + "&nbsp;Value: " + value + "</div>";
+                System.out.println(key);
+
+                if (key.equals("id")){
+                  System.out.println("key student");
+                  text = dbi.getStudent(value);
+
+                }
             }
-            text += "</body></html>";
 
             return text;
         }
-
         @Override
         public String getMimeType() {
             return "text/html";
@@ -155,18 +208,10 @@ public class HttpServer extends RouterNanoHTTPD {
     @Override
     public void addMappings() {
         super.addMappings();
-        addRoute("/user", UserHandler.class);
-        addRoute("/user", UserHandler.class); // add it twice to execute the
-                                              // priority == priority case
-        addRoute("/user/help", GeneralHandler.class);
-        addRoute("/user/:id", UserHandler.class);
-        addRoute("/general/:param1/:param2", GeneralHandler.class);
-        addRoute("/photos/:customer_id/:photo_id", null);
-        addRoute("/test", String.class);
-        addRoute("/interface", UriResponder.class); // this will cause an error
-                                                    // when called
-        addRoute("/toBeDeleted", String.class);
-        removeRoute("/toBeDeleted");
+        addRoute("/student", StudentSkillHandler.class);
+        addRoute("/student/help", GeneralHandler.class);
+        addRoute("/student/:id", StudentHandler.class);
+        addRoute("/addStudentSkill", StudentSkillHandler.class);
         addRoute("/stream", StreamUrl.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
     }
