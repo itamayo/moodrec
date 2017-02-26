@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.*;
 
 import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.response.IStatus;
@@ -72,20 +73,25 @@ public class HttpServer extends RouterNanoHTTPD {
             }
 
             public String getText(Map<String, String> urlParams, IHTTPSession session) {
-                String text = new String("");
+              DBInterface dbi = new DBInterface();
+              String text = "";
+              System.out.println("ID"+urlParams.get("id"));
+              System.out.println("CMD"+urlParams.get("cmd"));
+              System.out.println("CMD"+urlParams.get("skill"));
+              String id = urlParams.get("id");
+              String cmd = urlParams.get("cmd");
+              String skill = urlParams.get("skill");
 
-                for (Map.Entry<String, String> entry : urlParams.entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    text += "<div> Param: " + key + "&nbsp;Value: " + value + "</div>";
-                }
-              /*  text += "<h1>Query parameters:</h1>";
-                for (Map.Entry<String, String> entry : session.getParms().entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    text += "<div> Query Param: " + key + "&nbsp;Value: " + value + "</div>";
-                }
-                text += "</body></html>";*/
+              if (cmd.equals("add")){
+                String _id = dbi.addSkill(id,skill);
+                text = "{\"response\":\"skill added\",\"id\":\""+_id+"\"}";
+              }
+              else if (cmd.equals("update")){
+                  text = dbi.updateSkill(id,skill,0.4);
+              }
+              else if (cmd.equals("get")){
+                  text = dbi.getStudent(id);
+              }
 
                 return text;
             }
@@ -118,27 +124,21 @@ public class HttpServer extends RouterNanoHTTPD {
         public String getText(Map<String, String> urlParams, IHTTPSession session) {
             DBInterface dbi = new DBInterface();
             String text = "";
-            for (Map.Entry<String, String> entry : urlParams.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                System.out.println(key);
-                if (key.equals("id")){
-                  System.out.println("key student");
-                  text = dbi.getStudent(value);
-                  dbi.addSkillStudent("58a9ee1e07f4183ecf602058","multiplication",0.5);
-                }
+            System.out.println("ID"+urlParams.get("id"));
+            System.out.println("CMD"+urlParams.get("cmd"));
+            String id = urlParams.get("id");
+            String cmd = urlParams.get("cmd");
+            if (cmd.equals("create")){
+              String _id = dbi.addStudent(id);
+              text = "{\"response\":\"student added\",\"id\":\""+_id+"\"}";
             }
-            for (Map.Entry<String, String> entry : session.getParms().entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                System.out.println(key);
-
-                if (key.equals("id")){
-                  System.out.println("key student");
-                  text = dbi.getStudent(value);
-
-                }
+            else if (cmd.equals("update")){
+                //text = dbi.getStudent(id);
             }
+            else if (cmd.equals("get")){
+                text = dbi.getStudent(id);
+            }
+
 
             return text;
         }
@@ -208,10 +208,9 @@ public class HttpServer extends RouterNanoHTTPD {
     @Override
     public void addMappings() {
         super.addMappings();
-        addRoute("/student", StudentSkillHandler.class);
-        addRoute("/student/help", GeneralHandler.class);
-        addRoute("/student/:id", StudentHandler.class);
-        addRoute("/addStudentSkill", StudentSkillHandler.class);
+        addRoute("/student/:cmd/:id", StudentHandler.class);
+        //addRoute("/student/:id", StudentHandler.class);
+        addRoute("/studentSkill/:cmd/:skill/:id", StudentSkillHandler.class);
         addRoute("/stream", StreamUrl.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
     }

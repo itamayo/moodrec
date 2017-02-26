@@ -17,8 +17,6 @@ public class MoodRec{
   public int init (){
     DBInterface dbi = new DBInterface();
     HttpServer.run();
-    dbi.addStudentData();
-    dbi.prinStudentsData();
     return 1;
   }
 

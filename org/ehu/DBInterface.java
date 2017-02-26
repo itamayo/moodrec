@@ -3,7 +3,8 @@ package org.ehu;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
-
+import com.mongodb.DBRef;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
 
@@ -32,34 +33,15 @@ public  class DBInterface {
       System.out.println("Connected to DB");
       student = db.getCollection("student");
       studentSkills = db.getCollection("StudentSkills");
-      this.addStudentData();
+
     }
     catch (Exception e){}
   }
-public int addStudentData (){
-/*
-Mongo m = new Mongo("localhost", 27017);
-DB db = m.getDB("test");
-DBCollection myColl = db.getCollection("myCollection");
-
-BasicDBObject docToInsert = new BasicDBObject("resourceID", "3");
-docToInsert.put("resourceName", "Foo Test3");
-
-BasicDBObject updateQuery = new BasicDBObject("_id", "1");
-updateQuery.put("itemList.itemID", "1");
-
-BasicDBObject updateCommand = new BasicDBObject("$push", new BasicDBObject("itemList.$.resources", docToInsert));
-
-myColl.update(updateQuery, updateCommand);
-System.out.println(myColl.findOne().toString());*/
-  Document doc = new Document("id", "std01")
-      .append("name", "iñigo tamayo")
-      .append("skills", "multiplication")
-      .append("correct", 0)
-      .append("pknown", 0.3);
+public String addStudent (String name){
+  Document doc = new Document("name", name);
+  doc.put("skills",Arrays.asList());
   studentSkills.insertOne(doc);
-  this.prinStudentsData();
-  return 1;
+  return doc.get("_id").toString();
 }
 public void prinStudentsData (){
   Bkt bkt = new Bkt();
@@ -105,16 +87,70 @@ public String getStudent (String id){
     return tnp;
 }
 
-/* add or update
+/* add
    Student skill known
 */
-public String addSkillStudent (String id,String skill,Double pknow){
-  System.out.println("adding skill student "+id);
+public String addSkill (String studentid,String skill){
+  System.out.println("adding skill "+skill+ " student "+studentid);
   String tnp = new String("");
   Document query = new Document();
-  query.put("_id", new ObjectId(id));
-  query.put("skills", skill);
-  studentSkills.updateOne(query,new Document("$set", new Document("pknown", pknow)));
+  query = new Document("_id", new ObjectId(
+           studentid)).append("skills.name",skill);
+   MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+      System.out.println("Skill all ready exists !");
+   }
+   // SKill is new for student
+   else{
+     System.out.println("query not working ");
+     Document _skill = new Document();
+     _skill.append("name",skill);
+     _skill.append("pknown",0.3);
+     _skill.append("subject","math");
+     _skill.append("answer",Arrays.asList());
+     // Insert to student skills
+     Document std = new Document();
+     std.append("_id",new ObjectId(studentid));
+     studentSkills.updateOne(std,new Document("$set",new Document("skills",Arrays.asList(_skill))));
+   }
+  } finally {
+     cursor.close();
+  }
+/*  try {
+  studentSkills.updateOne(query,new Document("$set", new Document("pknown", 0.3)));
+}
+catch (Exception e){
+  System.out.println(e);
+}*/
+  System.out.println("updating know of student");
+  return tnp;
+}
+/* update
+   Student skill known
+*/
+public String updateSkill (String studentid,String skill,Double pknow){
+  System.out.println("updating skill "+skill+ " student "+studentid + " pknow "+pknow);
+  String tnp = new String("");
+  Document query = new Document();
+  query = new Document("_id", new ObjectId(
+           studentid)).append("skills.name",skill);
+   MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+      Document c = cursor.next();
+      studentSkills.updateOne(c,new Document("$set",new Document("pknown",pknow)));
+   }
+   // SKill is new for student
+   else{
+     System.out.println("Warning Skill does not exists, please add before !");
+   }
+  } finally {
+     cursor.close();
+  }
+
   System.out.println("updating know of student");
   return tnp;
 }
