@@ -86,7 +86,20 @@ public String getStudent (String id){
     }
     return tnp;
 }
-
+/* add
+   Subject
+*/
+public String addSubject (String subjectid,String vector){
+  /* TODO */
+  return " ";
+}
+/* add
+   Subject
+*/
+public String getSubject (String subjectid){
+  /* TODO */
+  return " ";
+}
 /* add
    Student skill known
 */

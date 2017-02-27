@@ -128,6 +128,54 @@ public class HttpServer extends RouterNanoHTTPD {
             System.out.println("CMD"+urlParams.get("cmd"));
             String id = urlParams.get("id");
             String cmd = urlParams.get("cmd");
+            String vector = urlParams.get("vector");
+
+            if (cmd.equals("create")){
+              String _id = dbi.addSubject(id,vector);
+              text = "{\"response\":\"student added\",\"id\":\""+_id+"\"}";
+            }
+            else if (cmd.equals("update")){
+                //text = dbi.getStudent(id);
+            }
+            else if (cmd.equals("get")){
+                text = dbi.getSubject(id);
+            }
+
+
+            return text;
+        }
+        @Override
+        public String getMimeType() {
+            return "text/html";
+        }
+
+        @Override
+        public IStatus getStatus() {
+            return Status.OK;
+        }
+
+        public Response get(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+            String text = getText(urlParams, session);
+            ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
+            int size = text.getBytes().length;
+            return Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+        }
+
+    }
+    public static class SubjectHandler extends DefaultHandler {
+
+        @Override
+        public String getText() {
+            return "not implemented";
+        }
+
+        public String getText(Map<String, String> urlParams, IHTTPSession session) {
+            DBInterface dbi = new DBInterface();
+            String text = "";
+            System.out.println("ID"+urlParams.get("id"));
+            System.out.println("CMD"+urlParams.get("cmd"));
+            String id = urlParams.get("id");
+            String cmd = urlParams.get("cmd");
             if (cmd.equals("create")){
               String _id = dbi.addStudent(id);
               text = "{\"response\":\"student added\",\"id\":\""+_id+"\"}";
@@ -160,7 +208,6 @@ public class HttpServer extends RouterNanoHTTPD {
         }
 
     }
-
     static public class StreamUrl extends DefaultStreamHandler {
 
         @Override
@@ -209,7 +256,7 @@ public class HttpServer extends RouterNanoHTTPD {
     public void addMappings() {
         super.addMappings();
         addRoute("/student/:cmd/:id", StudentHandler.class);
-        //addRoute("/student/:id", StudentHandler.class);
+        addRoute("/subject/:cmd/:id/:vector", SubjectHandler.class);
         addRoute("/studentSkill/:cmd/:skill/:id", StudentSkillHandler.class);
         addRoute("/stream", StreamUrl.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
