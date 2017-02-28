@@ -172,13 +172,17 @@ public class HttpServer extends RouterNanoHTTPD {
         public String getText(Map<String, String> urlParams, IHTTPSession session) {
             DBInterface dbi = new DBInterface();
             String text = "";
-            System.out.println("ID"+urlParams.get("id"));
-            System.out.println("CMD"+urlParams.get("cmd"));
+            System.out.println("ID "+urlParams.get("id"));
+            System.out.println("CMD "+urlParams.get("cmd"));
+            System.out.println("Vector "+urlParams.get("vector"));
+            System.out.println("DOC "+urlParams.get("doc"));
             String id = urlParams.get("id");
             String cmd = urlParams.get("cmd");
+            String vector = urlParams.get("vector");
+            String doc = urlParams.get("doc");
             if (cmd.equals("create")){
-              String _id = dbi.addStudent(id);
-              text = "{\"response\":\"student added\",\"id\":\""+_id+"\"}";
+              String _id = dbi.addSubject(id,vector,doc);
+              text = "{\"response\":\"subject added\",\"id\":\""+_id+"\"}";
             }
             else if (cmd.equals("update")){
                 //text = dbi.getStudent(id);
@@ -256,7 +260,7 @@ public class HttpServer extends RouterNanoHTTPD {
     public void addMappings() {
         super.addMappings();
         addRoute("/student/:cmd/:id", StudentHandler.class);
-        addRoute("/subject/:cmd/:id/:vector", SubjectHandler.class);
+        addRoute("/subject/:cmd/:id/:vector/:doc", SubjectHandler.class);
         addRoute("/studentSkill/:cmd/:skill/:id", StudentSkillHandler.class);
         addRoute("/stream", StreamUrl.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());

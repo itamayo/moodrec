@@ -25,6 +25,8 @@ import java.util.List;
 public  class DBInterface {
   MongoCollection<Document> student;
   MongoCollection<Document> studentSkills;
+  MongoCollection<Document> subject;
+
 
   public DBInterface(){
     try {
@@ -32,11 +34,16 @@ public  class DBInterface {
       MongoDatabase db = mongoClient.getDatabase("mydb");
       System.out.println("Connected to DB");
       student = db.getCollection("student");
+      subject = db.getCollection("subject");
       studentSkills = db.getCollection("StudentSkills");
 
     }
     catch (Exception e){}
   }
+/*
+  add student data
+
+*/
 public String addStudent (String name){
   Document doc = new Document("name", name);
   doc.put("skills",Arrays.asList());
@@ -167,4 +174,15 @@ public String updateSkill (String studentid,String skill,Double pknow){
   System.out.println("updating know of student");
   return tnp;
 }
+/*
+  add subject
+*/
+public String addSubject (String name,String vector,String doc){
+  Document subj = new Document("name", name);
+  subj.put("docs",Arrays.asList(doc));
+  subj.put("spaceVector",vector);
+  subject.insertOne(subj);
+  return subj.get("_id").toString();
+}
+
 }
