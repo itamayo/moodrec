@@ -131,14 +131,14 @@ public class HttpServer extends RouterNanoHTTPD {
             String vector = urlParams.get("vector");
 
             if (cmd.equals("create")){
-              String _id = dbi.addSubject(id,vector);
+              String _id = dbi.addStudent(id);
               text = "{\"response\":\"student added\",\"id\":\""+_id+"\"}";
             }
             else if (cmd.equals("update")){
-                //text = dbi.getStudent(id);
+              //  text = dbi.getStudent(id);
             }
             else if (cmd.equals("get")){
-                text = dbi.getSubject(id);
+                text = dbi.getStudent(id);
             }
 
 
@@ -183,6 +183,56 @@ public class HttpServer extends RouterNanoHTTPD {
             if (cmd.equals("create")){
               String _id = dbi.addSubject(id,vector,doc);
               text = "{\"response\":\"subject added\",\"id\":\""+_id+"\"}";
+            }
+            else if (cmd.equals("update")){
+                //text = dbi.getStudent(id);
+            }
+            else if (cmd.equals("get")){
+                text = dbi.getStudent(id);
+            }
+
+
+            return text;
+        }
+        @Override
+        public String getMimeType() {
+            return "text/html";
+        }
+
+        @Override
+        public IStatus getStatus() {
+            return Status.OK;
+        }
+
+        public Response get(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+            String text = getText(urlParams, session);
+            ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
+            int size = text.getBytes().length;
+            return Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+        }
+
+    }
+    public static class ExerciseAttributesHandler extends DefaultHandler {
+
+        @Override
+        public String getText() {
+            return "not implemented";
+        }
+
+        public String getText(Map<String, String> urlParams, IHTTPSession session) {
+            DBInterface dbi = new DBInterface();
+            String text = "";
+            System.out.println("ID "+urlParams.get("id"));
+            System.out.println("CMD "+urlParams.get("cmd"));
+            System.out.println("Vector "+urlParams.get("vector"));
+            System.out.println("subjects "+urlParams.get("subjects"));
+            String id = urlParams.get("id");
+            String cmd = urlParams.get("cmd");
+            String vector = urlParams.get("vector");
+            String subjects = urlParams.get("subjects");
+            if (cmd.equals("create")){
+              String _id = dbi.addExerciseAttr(vector,subjects);
+              text = "{\"response\":\"exerciseAttr added\",\"id\":\""+_id+"\"}";
             }
             else if (cmd.equals("update")){
                 //text = dbi.getStudent(id);
@@ -261,6 +311,7 @@ public class HttpServer extends RouterNanoHTTPD {
         super.addMappings();
         addRoute("/student/:cmd/:id", StudentHandler.class);
         addRoute("/subject/:cmd/:id/:vector/:doc", SubjectHandler.class);
+        addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects", ExerciseAttributesHandler.class);
         addRoute("/studentSkill/:cmd/:skill/:id", StudentSkillHandler.class);
         addRoute("/stream", StreamUrl.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());

@@ -26,7 +26,7 @@ public  class DBInterface {
   MongoCollection<Document> student;
   MongoCollection<Document> studentSkills;
   MongoCollection<Document> subject;
-
+  MongoCollection<Document> exerciseAttr;
 
   public DBInterface(){
     try {
@@ -36,6 +36,8 @@ public  class DBInterface {
       student = db.getCollection("student");
       subject = db.getCollection("subject");
       studentSkills = db.getCollection("StudentSkills");
+      exerciseAttr = db.getCollection("exerciseAttr");
+
 
     }
     catch (Exception e){}
@@ -93,13 +95,7 @@ public String getStudent (String id){
     }
     return tnp;
 }
-/* add
-   Subject
-*/
-public String addSubject (String subjectid,String vector){
-  /* TODO */
-  return " ";
-}
+
 /* add
    Subject
 */
@@ -182,6 +178,17 @@ public String addSubject (String name,String vector,String doc){
   subj.put("docs",Arrays.asList(doc));
   subj.put("spaceVector",vector);
   subject.insertOne(subj);
+  return subj.get("_id").toString();
+}
+
+/*
+  add exerciseAttr
+*/
+public String addExerciseAttr (String vector,String subjects){
+  Document subj = new Document();
+  subj.put("subjects",Arrays.asList(subjects));
+  subj.put("spaceVector",vector);
+  exerciseAttr.insertOne(subj);
   return subj.get("_id").toString();
 }
 
