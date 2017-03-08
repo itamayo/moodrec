@@ -1,38 +1,39 @@
 <html>
 <head> <title> Ariketak probak egiteko</title>
+  <script src="MoodRec.client.js"></script>
 </head>
 <body>
   <h2>  Ariketak probak egiteko </h2>
   <div>
     <p> Kalkulatu ezazu hurrengo probabilitatea:</p>
-    <select id="ar1">
+    <select id="ar1" skill="basic_probability">
       <option value="0.1" correct="true">0.1</option>
       <option value="0.15" correct="false">0.15</option>
       <option value="0.4" correct="false">0.15</option>
     </select>
 
     <p> Kalkulatu ezazu hurrengo probabilitatea kondizionala:</p>
-    <select id="ar1">
+    <select id="ar1" skill="condicional_probability">
       <option value="0.1" correct="true">0.1</option>
       <option value="0.15" correct="false">0.15</option>
       <option value="0.4" correct="false">0.15</option>
     </select>
 
     <p> Kalkulatu ezazu hurrengo alderantzizko probabilitatea :</p>
-    <select id="ar1">
+    <select id="ar1" skill="reverse_probability">
       <option value="0.1" correct="true">0.1</option>
       <option value="0.15" correct="false">0.15</option>
       <option value="0.4" correct="false">0.15</option>
     </select>
 
     <p> Kalkulatu ezazu hurrengo probabilitatea bayesen erregelak erabiliz:</p>
-    <select id="ar1">
+    <select id="ar1" skill="bayes_rule">
       <option value="0.1" correct="true">0.1</option>
       <option value="0.15" correct="false">0.15</option>
       <option value="0.4" correct="false">0.15</option>
     </select>
 
-<p><button> bidali </button></p>
+<p><button action="save"> bidali </button></p>
   </div>
 </body>
 </html>
