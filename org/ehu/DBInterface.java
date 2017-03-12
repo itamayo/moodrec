@@ -129,7 +129,7 @@ public String addSkill (String studentid,String skill){
      // Insert to student skills
      Document std = new Document();
      std.append("_id",new ObjectId(studentid));
-     studentSkills.updateOne(std,new Document("$set",new Document("skills",Arrays.asList(_skill))));
+     studentSkills.updateOne(std,new Document("$push",new Document("skills",_skill)));
    }
   } finally {
      cursor.close();
