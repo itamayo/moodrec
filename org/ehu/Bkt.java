@@ -20,7 +20,8 @@ public class Bkt {
       this.pknow = 0.0;
       return 1;
    }
-   public int updateMastering (boolean correct){
+   public double updateMastering (boolean correct,double pknow){
+     this.pknow = pknow;
      if (this.pknow ==0.0){
        this.pknow = this.pl0;
      }
@@ -36,6 +37,6 @@ public class Bkt {
         this.pknow = p_l__actual + ((1-p_l__actual)*this.plt);
       }
       System.out.println(this.pknow);
-      return 1;
+      return this.pknow;
    }
 }

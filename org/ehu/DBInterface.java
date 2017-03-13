@@ -20,6 +20,8 @@ import static com.mongodb.client.model.Updates.*;
 import com.mongodb.client.result.UpdateResult;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
+
 
 
 public  class DBInterface {
@@ -67,7 +69,7 @@ public void prinStudentsData (){
            if (ans == 1) correct = true;
            else correct = false;
            System.out.println(correct);
-           bkt.updateMastering(correct);
+           //bkt.updateMastering(correct);
        }
     } finally {
        cursor.close();
@@ -143,6 +145,50 @@ catch (Exception e){
   System.out.println("updating know of student");
   return tnp;
 }
+/*
+  get saved pknow of student skill
+*/
+
+public double getSkillPknow (String stdId,String skill){
+  double pknow = 0.0;
+  Iterator<Document> cr;
+  Document query = new Document();
+  query = new Document("_id", new ObjectId(stdId)).append("skills.name",skill);
+   MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+      Document c = cursor.next();
+      List<Document> skills = (List<Document>)c.get("skills");
+      cr = skills.iterator();
+      try {
+        while (cr.hasNext()){
+            Document sk = cr.next();
+            String name = (String)sk.get("name");
+            System.out.println(name);
+            if (name.equals(skill)){
+                pknow = (double)sk.get("pknown");
+                System.out.println(pknow);
+            }
+        }
+    //    System.out.println(c.toJson(),skills);
+
+
+    }
+     finally {
+      //  cr.close();
+     }
+   }
+   // SKill is new for student
+   else{
+     System.out.println("Warning Skill does not exists, please add before !");
+   }
+  } finally {
+     cursor.close();
+  }
+  return pknow;
+}
+
 /* update
    Student skill known
 */
@@ -157,7 +203,8 @@ public String updateSkill (String studentid,String skill,Double pknow){
     // SKill already exists
     if (cursor.hasNext()){
       Document c = cursor.next();
-      studentSkills.updateOne(c,new Document("$set",new Document("pknown",pknow)));
+      c.put("skills.name",skill);
+      studentSkills.updateOne(c,new Document("$set",new Document("skills.$.pknown",pknow)));
    }
    // SKill is new for student
    else{

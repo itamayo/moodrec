@@ -60,6 +60,7 @@ import org.nanohttpd.router.RouterNanoHTTPD.UriResource;
 import org.nanohttpd.router.RouterNanoHTTPD.UriResponder;
 import org.nanohttpd.util.ServerRunner;
 import org.ehu.DBInterface;
+import org.ehu.Bkt;
 
 public class HttpServer extends RouterNanoHTTPD {
 
@@ -81,13 +82,20 @@ public class HttpServer extends RouterNanoHTTPD {
               String id = urlParams.get("id");
               String cmd = urlParams.get("cmd");
               String skill = urlParams.get("skill");
-
+              String correct = urlParams.get("correct");
+              double pknow = 0.0;
               if (cmd.equals("add")){
                 String _id = dbi.addSkill(id,skill);
                 text = "{\"response\":\"skill added\",\"id\":\""+_id+"\"}";
               }
               else if (cmd.equals("update")){
-                  text = dbi.updateSkill(id,skill,0.4);
+                  Bkt bkt = new Bkt();
+                  double savedPknow = dbi.getSkillPknow(id,skill);
+                  if (correct.equals("true")) pknow = bkt.updateMastering(true,savedPknow);
+                  else  pknow = bkt.updateMastering(false,savedPknow);
+                  text = dbi.updateSkill(id,skill,pknow);
+                  text = "{\"skill\":\""+skill+"\",\"pknow\":"+pknow+"}";
+                  System.out.println(text);
               }
               else if (cmd.equals("get")){
                   text = dbi.getStudent(id);
@@ -312,7 +320,7 @@ public class HttpServer extends RouterNanoHTTPD {
         addRoute("/student/:cmd/:id", StudentHandler.class);
         addRoute("/subject/:cmd/:id/:vector/:doc", SubjectHandler.class);
         addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects", ExerciseAttributesHandler.class);
-        addRoute("/studentSkill/:cmd/:skill/:id", StudentSkillHandler.class);
+        addRoute("/studentSkill/:cmd/:skill/:id/:correct", StudentSkillHandler.class);
         addRoute("/stream", StreamUrl.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
     }
