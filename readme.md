@@ -26,4 +26,11 @@ Besterik gabe, behin java 8 instalatua izan ostean:
 sh run.sh
 
 ```
-Momentuz, 8080 portuan kokatzen da zerbitzaria. Oraingoz ez du gauza haundirik egiten.
+Momentuz, 8080 portuan kokatzen da zerbitzaria.
+
+# Testa
+
+Webgune basiko bat sortu dut garatzen noan implementazioak probatzeko, honako helbidean topatu daiteke,
+oraingoz BKT implementatzen du.
+
+http://localhost:8080/browse/tests/index.html
