@@ -248,6 +248,17 @@ public class HttpServer extends RouterNanoHTTPD {
             else if (cmd.equals("get")){
                 text = dbi.getStudent(id);
             }
+            else if (cmd.equals("compare")){
+                String[] vect1 = urlParams.get("subjects").split(",");
+                double[] vec1 = Arrays.stream(vect1)
+                        .mapToDouble(Double::parseDouble)
+                        .toArray();
+                double[] vec2 = Arrays.stream(vector.split(","))
+                                .mapToDouble(Double::parseDouble)
+                                .toArray();
+                double result = new VectorSpaceModel().getSimilarity(vec1,vec2);
+                System.out.println("Similarity;"+result);
+            }
 
 
             return text;
