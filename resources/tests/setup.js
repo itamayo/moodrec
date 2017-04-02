@@ -17,3 +17,5 @@ http://localhost:8080/subject/create/statistics/0.1,0.1,0.1,0.7/bayes.pdf
 http://localhost:8080/subject/create/statistics/0.3,0.1,0.6,0.0/exercises.pdf
 compare documents
 http://localhost:8080/exerciseAttr/compare/none/0.4,0.4,0.4,0.8/0.1,0.4,0.5,0.0
+getRecommendation
+http://localhost:8080/subject/getRecommendation/none/0.5,0.5,0.0,0.0/none

@@ -198,6 +198,17 @@ public class HttpServer extends RouterNanoHTTPD {
             else if (cmd.equals("get")){
                 text = dbi.getStudent(id);
             }
+            else if (cmd.equals("getRecommendation")){
+                System.out.println(vector);
+                String[] vect1 = urlParams.get("vector").split(",");
+                double[] vec1 = Arrays.stream(vect1)
+                        .mapToDouble(Double::parseDouble)
+                        .toArray();
+
+               String result = dbi.getRelatedSubject(vec1);
+               text = result;
+
+            }
 
 
             return text;

@@ -11,6 +11,7 @@ import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import java.util.Arrays;
+import java.util.*;
 import com.mongodb.Block;
 
 import com.mongodb.client.MongoCursor;
@@ -105,6 +106,62 @@ public String getSubject (String subjectid){
   /* TODO */
   return " ";
 }
+/*
+  Get similarity docs related with spaceVector
+*/
+public String getRelatedSubject (double [] vector){
+  VectorSpaceModel vectorSpaceModel = new VectorSpaceModel();
+  MongoCursor<Document> cr = subject.find().iterator();
+  class similarities implements Comparable<similarities>{
+    double sim = 0.0;
+    ArrayList<String>  docs;
+    public similarities(double s,ArrayList<String> d){
+      this.sim =s;
+      this.docs = d;
+    }
+    @Override
+    public int compareTo(similarities s1) {
+        if (this.sim < s1.sim) return 1;
+        else return -1;
+    }
+  }
+  ArrayList<similarities> sims = new ArrayList<similarities>();
+  try {
+    while (cr.hasNext()){
+        Document sbj = cr.next();
+        String tnp = (String)sbj.get("spaceVector");
+        ArrayList<String> docs = (ArrayList<String>) sbj.get("docs");
+        String [] vct = tnp.split(",");
+        double[] vec1 = Arrays.stream(vct)
+                .mapToDouble(Double::parseDouble)
+                .toArray();
+        double sim = vectorSpaceModel.getSimilarity(vec1,vector);
+        if (sim>0.55){
+           sims.add(new similarities(sim,docs));
+
+        }
+    }
+
+}
+ finally {
+  //  cr.close();
+ }
+ Collections.sort(sims);
+ String result = "{\"docs\":[";
+ for(similarities sim:sims){
+   System.out.println(sim.docs);
+   System.out.println(sim.sim);
+   result+="{\"sim\":"+sim.sim+",\"docs\":[";
+   for(String doc:sim.docs){
+     result+="\""+doc+"\",";
+   }
+   result = result.substring(0,result.length()-1);
+   result+="]},";
+ }
+ result = result.substring(0,result.length()-1);
+ result+="]}";
+  return result;
+}
 /* add
    Student skill known
 */
@@ -176,7 +233,7 @@ public double getSkillPknow (String stdId,String skill){
 
     }
      finally {
-      //  cr.close();
+        cursor.close();
      }
    }
    // SKill is new for student

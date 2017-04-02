@@ -5,7 +5,7 @@
     var execs = document.querySelectorAll('[skill]');
     for (ex in execs){
       if (execs[ex].nodeName){
-       var item = {"skill":execs[ex].getAttribute('skill'),"elem":execs[ex]};
+       var item = {"skill":execs[ex].getAttribute('skill'),"elem":execs[ex],"sv":execs[ex].getAttribute('sv')};
        exercises.push(item);
      }
     }
@@ -23,8 +23,13 @@
               MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+ex.correctAnswer,function(err,res){
               if (err) {console.warn(err);}
               else {
-                console.log(res);
+
                 document.querySelector("#ans"+i).innerHTML+=" Probability of know it:"+res.pknow;
+                if (parseFloat(res.pknow)<0.55){
+                  MoodRec.callBackend("/subject/getRecommendation/none/"+MoodRec.getExercices()[i].sv+"/none",function(err,res){
+                      document.body.innerHTML+="<div>Recommended documentation:"+JSON.stringify(res.docs);
+                  });
+                }
               }
             });
           })(i);
