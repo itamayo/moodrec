@@ -98,6 +98,21 @@ public String getStudent (String id){
     }
     return tnp;
 }
+/*
+  get all student
+*/
+public String getAllStudent (){
+  MongoCursor<Document> cursor = studentSkills.find().iterator();
+  String json = "{\"result\":[";
+  while (cursor.hasNext()){
+    Document c = (Document)cursor.next();
+    json +=c.toJson()+",";
+
+  }
+  json = json.substring(0,json.length()-1);
+  json+="]}";
+  return json;
+}
 
 /* add
    Subject
@@ -278,7 +293,7 @@ public String updateSkill (String studentid,String skill,Double pknow){
   add subject
 */
 public String addSubject (String name,String vector,String doc){
-  Document subj = new Document("name", name);
+  Document subj = new Document("id", name);
   subj.put("docs",Arrays.asList(doc));
   subj.put("spaceVector",vector);
   subject.insertOne(subj);
@@ -288,12 +303,28 @@ public String addSubject (String name,String vector,String doc){
 /*
   add exerciseAttr
 */
-public String addExerciseAttr (String vector,String subjects){
+public String addExerciseAttr (String id,String vector,String subjects){
   Document subj = new Document();
   subj.put("subjects",Arrays.asList(subjects));
+  subj.put("id",id);
   subj.put("spaceVector",vector);
   exerciseAttr.insertOne(subj);
   return subj.get("_id").toString();
+}
+/*
+  get exerciseAttr
+*/
+public String getExerciseAttr (){
+  MongoCursor<Document> cursor = exerciseAttr.find().iterator();
+  String json = "{\"result\":[";
+  while (cursor.hasNext()){
+    Document c = (Document)cursor.next();
+    json +=c.toJson()+",";
+
+  }
+  json = json.substring(0,json.length()-1);
+  json+="]}";
+  return json;
 }
 
 }

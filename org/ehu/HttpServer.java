@@ -98,6 +98,11 @@ public class HttpServer extends RouterNanoHTTPD {
                   System.out.println(text);
               }
               else if (cmd.equals("get")){
+                System.out.println("ID"+id);
+                 if(id.compareTo("none")!=-1){
+                    text = dbi.getAllStudent();
+                    System.out.println(text);
+                 }else
                   text = dbi.getStudent(id);
               }
 
@@ -250,14 +255,14 @@ public class HttpServer extends RouterNanoHTTPD {
             String vector = urlParams.get("vector");
             String subjects = urlParams.get("subjects");
             if (cmd.equals("create")){
-              String _id = dbi.addExerciseAttr(vector,subjects);
+              String _id = dbi.addExerciseAttr(id,vector,subjects);
               text = "{\"response\":\"exerciseAttr added\",\"id\":\""+_id+"\"}";
             }
             else if (cmd.equals("update")){
                 //text = dbi.getStudent(id);
             }
             else if (cmd.equals("get")){
-                text = dbi.getStudent(id);
+                text = dbi.getExerciseAttr();
             }
             else if (cmd.equals("compare")){
                 String[] vect1 = urlParams.get("subjects").split(",");
