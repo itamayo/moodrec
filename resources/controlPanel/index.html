@@ -1,0 +1,37 @@
+<html>
+<head><title>Control Panel</title>
+  <script src="moodrec.js"></script>
+</head>
+<style>
+#header{
+  background-color: #449933;
+  height:2%;
+  padding:10px;
+}
+#header button {
+  background: #110056;
+  color:white;
+}
+.ikusezin{
+  display:none;
+}
+td{
+  padding:20px;
+}
+th{
+  padding:10px;
+}
+</style>
+
+</head>
+<body>
+  <div id="header">
+      <button onclick=MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</button>
+      <button onclick=MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</button>
+      <button> Gaiak</button>
+  </div>
+  <div id="ariketak" class="ikusezin" ></div>
+  <div id="gaiak" class="ikusezin" ></div>
+  <div id="ikasleak" class="ikusezin"></div>
+</body>
+</html>
