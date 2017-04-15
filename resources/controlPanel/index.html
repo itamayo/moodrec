@@ -21,6 +21,13 @@ td{
 th{
   padding:10px;
 }
+.panel{
+  position:absolute;
+  top:40%;
+  left:35%;
+  width:30%;
+  border:1px solid black;
+}
 </style>
 
 </head>
@@ -28,7 +35,7 @@ th{
   <div id="header">
       <button onclick=MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</button>
       <button onclick=MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</button>
-      <button> Gaiak</button>
+      <button onclick=MoodRec.renderGaiak(document.querySelector('#gaiak'))> Gaiak</button>
   </div>
   <div id="ariketak" class="ikusezin" ></div>
   <div id="gaiak" class="ikusezin" ></div>

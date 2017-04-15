@@ -299,6 +299,21 @@ public String addSubject (String name,String vector,String doc){
   subject.insertOne(subj);
   return subj.get("_id").toString();
 }
+/*
+  get all subject
+*/
+public String getAllSubjects (){
+  MongoCursor<Document> cursor = subject.find().iterator();
+  String json = "{\"result\":[";
+  while (cursor.hasNext()){
+    Document c = (Document)cursor.next();
+    json +=c.toJson()+",";
+
+  }
+  json = json.substring(0,json.length()-1);
+  json+="]}";
+  return json;
+}
 
 /*
   add exerciseAttr
