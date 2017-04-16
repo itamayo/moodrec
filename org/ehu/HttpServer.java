@@ -266,6 +266,9 @@ public class HttpServer extends RouterNanoHTTPD {
             else if (cmd.equals("update")){
                 //text = dbi.getStudent(id);
             }
+            else if (cmd.equals("remove")){
+                text = dbi.removeExercise(id);
+            }
             else if (cmd.equals("get")){
                 text = dbi.getExerciseAttr();
             }

@@ -40,13 +40,21 @@
  var getExercices = function (){
    return exercises;
  }
+ var remove = function (id,type){
+    if (type=="ariketa"){
+      callBackend('/exerciseAttr/remove/'+id+'/none/none',function(err,result){
+         if (err) console.error(err);
+         MoodRec.renderArikerak(document.querySelector('#ariketak'));
+      })
+    }
+ }
  var renderArikerak = function (el){
     callBackend('/exerciseAttr/get/null/none/none',function(err,res){
       if (err) console.error("Error getting exercies");
       var html = "<button onclick=MoodRec.Panel.show('ariketak')>Gehitu Ariketa</button>";
-       html +="<table><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th></tr>";
+       html +="<table><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th><th></th></tr>";
        res.result.forEach(function(ex){
-          html+="<tr><td>"+ex.id+"</td><td>"+ex.subjects+"</td><td>"+ex.spaceVector+"</td></tr>";
+          html+="<tr><td>"+ex.id+"</td><td>"+ex.subjects+"</td><td>"+ex.spaceVector+"</td><td onclick=MoodRec.remove('"+ex._id.$oid+"','ariketa')>X</td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -101,48 +109,49 @@
      xmlhttp.open("GET", MoodRec.backend+url, true);
      xmlhttp.send();
  }
+
  var Panel = function(){
    return {
-     ikasleakTemplate:`<div class="panel" id="pIkasleak"><h3>title</h3>
+     ikasleakTemplate:`<div class="panel" id="pIkasleak"><h3>Ikaslea gehitu</h3>
                        <fieldset>
                        <legend> Izena</legend>
-                        <input id="ikIzena" value="name">
+                        <input id="ikIzena" value="">
                        </fieldset>
                        <fieldset>
                        <legend> Ezagupenak</legend>
-                        <input id="ikSkill" value="skills">
+                        <input id="ikSkill" value="">
                        </fieldset>
-                       <button> Gorde</button>
+                       <button> Gehitu</button>
                        </div>`,
-     ariketakTemplate:`<div class="panel" id="pAriketak"><h3>title</h3>
+     ariketakTemplate:`<div class="panel" id="pAriketak"><h3>Ariketa gehitu</h3>
                        <fieldset>
-                       <legend> Izena</legend>
-                        <input id="arIzena" value="name">
+                       <legend> Id (MoodleId)</legend>
+                        <input id="arId" value="">
                        </fieldset>
                        <fieldset>
                        <legend> Ezagupenak</legend>
-                        <input id="arSkill" value="skills">
+                        <input id="arSkill" value="" placeholder="biderkaketa,zatiketa,gehiketa">
                        </fieldset>
                         <fieldset>
                        <legend> Ezagupen Bektorea</legend>
-                        <input id="arSpaceVector" value="spaceVector">
+                        <input id="arSpaceVector" value="" placeholder="0.1,0.5,0.4">
                        </fieldset>
-                       <button> Gorde</button>
+                       <button onclick="MoodRec.Panel.save('ariketa')"> Gorde</button>
                        </div>`,
-     gaiakTemplate:`<div class="panel" id="pGaiak"><h3>title</h3>
+     gaiakTemplate:`<div class="panel" id="pGaiak"><h3>Gaia gehitu</h3>
                        <fieldset>
                        <legend> Izena</legend>
-                        <input id="gIzena" value="name">
+                        <input id="gIzena" value="" placeholder="Estadistika">
                        </fieldset>
                        <fieldset>
                        <legend> Doc</legend>
-                        <input id="gDoc" value="doc.pdf">
+                        <input id="gDoc" placeholder="doc.pdf">
                        </fieldset>
                         <fieldset>
                        <legend> Doc Bektorea</legend>
-                        <input id="gSpaceVector" value="spaceVector">
+                        <input id="gSpaceVector" placeholder="0.4,0.3,0.3">
                        </fieldset>
-                       <button> Gorde</button>
+                       <button onclick="MoodRec.Panel.save('gaia')"> Gehitu</button>
                        </div>`,
       show:function(id){
           if (id=="ikasleak"){
@@ -162,10 +171,34 @@
           }
       },
       hide:function(id){
-
+        var x = document.querySelector('.panel');
+        if (x) document.body.removeChild(x);
+      },
+      save:function(type){
+        if(type=="ariketa"){
+          var id = document.querySelector('#arId').value;
+          var skill = document.querySelector('#arSkill').value;
+          var sv = document.querySelector('#arSpaceVector').value;
+          callBackend('/exerciseAttr/create/'+id+'/'+sv+'/'+skill,function(err,result){
+            if(err) console.error("Error saving",err);
+            MoodRec.Panel.hide();
+            MoodRec.renderArikerak(document.querySelector('#ariketak'));
+          });
+        }
+        else if(type=="gaia"){
+          var izena = document.querySelector('#gIzena').value;
+          var doc = document.querySelector('#gDoc').value;
+          var sv = document.querySelector('#gSpaceVector').value;
+          callBackend('/subject/create/'+izena+'/'+sv+'/'+doc,function(err,result){
+            if(err) console.error("Error saving",err);
+            MoodRec.Panel.hide();
+            MoodRec.renderGaiak(document.querySelector('#gaiak'));
+          });
+        }
       }
 
    }
+
  }
   var API = {
       "getExercices":getExercices,
@@ -174,6 +207,7 @@
       "renderIkasleak":renderIkasleak,
       "renderGaiak":renderGaiak,
       "Panel": new Panel(),
+      "remove":remove,
       "backend":"http://localhost:8080"
   }
   //document.addEventListener('DOMContentLoaded',mapExercises.bind(this));

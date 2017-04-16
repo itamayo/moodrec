@@ -326,6 +326,15 @@ public String addExerciseAttr (String id,String vector,String subjects){
   exerciseAttr.insertOne(subj);
   return subj.get("_id").toString();
 }
+
+/*
+  remove exerciseAttr
+*/
+public String removeExercise (String id){
+
+  exerciseAttr.deleteOne(new Document("_id", new ObjectId(id)));
+  return "{\"result\":\"ok\"}";
+}
 /*
   get exerciseAttr
 */
