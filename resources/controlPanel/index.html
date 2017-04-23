@@ -1,12 +1,16 @@
 <html>
 <head><title>Control Panel</title>
   <script src="moodrec.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 <style>
 #header{
   background-color: #449933;
-  height:2%;
+  width:15%;
   padding:10px;
+  height:100%;
+  float:left;
 }
 #header button {
   background: #110056;
@@ -29,14 +33,35 @@ th{
   border:1px solid black;
   background: white;
 }
+#ariketak,#gaiak,#ikasleak{
+  width:80%;
+  padding-left:30%;
+  padding-top: 5%;
+}
+table{
+  margin-top:50px;
+}
+.menu{
+  padding-left:30px;
+}
+#title{
+  font-size: 25pt;
+  text-align: center;
+  color:white;
+  font-weight: bold;
+}
 </style>
 
 </head>
 <body>
   <div id="header">
-      <button onclick=MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</button>
-      <button onclick=MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</button>
-      <button onclick=MoodRec.renderGaiak(document.querySelector('#gaiak'))> Gaiak</button>
+    <p id="title"> MoodRec</p>
+    <ul class="w3-ul">
+    <li class="w3-hover-blue">
+      <span  onclick=MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</span></li>
+  <li class="w3-hover-blue">    <span  onclick=MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</span></li>
+  <li class="w3-hover-blue">    <span  onclick=MoodRec.renderGaiak(document.querySelector('#gaiak'))> Gaiak</span></li>
+</ul>
   </div>
   <div id="ariketak" class="ikusezin" ></div>
   <div id="gaiak" class="ikusezin" ></div>

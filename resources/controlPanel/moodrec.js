@@ -51,10 +51,10 @@
  var renderArikerak = function (el){
     callBackend('/exerciseAttr/get/null/none/none',function(err,res){
       if (err) console.error("Error getting exercies");
-      var html = "<button onclick=MoodRec.Panel.show('ariketak')>Gehitu Ariketa</button>";
-       html +="<table><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th><th></th></tr>";
+      var html = "<span onclick=MoodRec.Panel.show('ariketak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ariketa</span>";
+       html +="<table class='table'><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th><th></th></tr>";
        res.result.forEach(function(ex){
-          html+="<tr><td>"+ex.id+"</td><td>"+ex.subjects+"</td><td>"+ex.spaceVector+"</td><td onclick=MoodRec.remove('"+ex._id.$oid+"','ariketa')>X</td></tr>";
+          html+="<tr><td>"+ex.id+"</td><td>"+ex.subjects+"</td><td>"+ex.spaceVector+"</td><td onclick=MoodRec.remove('"+ex._id.$oid+"','ariketa')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -65,10 +65,14 @@
  var renderIkasleak = function (el){
     callBackend('/studentSkill/get/none/none/true',function(err,res){
       if (err) console.error("Error getting exercies");
-      var html = "<button onclick=MoodRec.Panel.show('ikasleak')>Gehitu Ikaslea</button>";
-       html +="<table><tr><th>Id</th><th> Izena</th><th> Ezagupenak</th></tr>";
+      var html = "<span onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ikaslea</span>";
+       html +="<table  class='table'><tr><th>Id</th><th> Izena</th><th> Ezagupenak</th></tr>";
        res.result.forEach(function(ik){
-          html+="<tr><td>"+ik._id.$oid+"</td><td>"+ik.name+"</td><td>"+JSON.stringify(ik.skills)+"</td></tr>";
+          html+="<tr><td>"+ik._id.$oid+"</td><td>"+ik.name+"</td><td>";
+          ik.skills.forEach(function(sk){
+            html+="<p>"+sk.name+" pknown:"+sk.pknown+"</p>";
+          })
+          html+="</td><td onclick=MoodRec.remove('"+ik._id.$oid+"','ikaslea')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -79,10 +83,10 @@
  var renderGaiak = function (el){
     callBackend('/subject/get/none/none/none',function(err,res){
       if (err) console.error("Error getting exercies");
-      var html = "<button onclick=MoodRec.Panel.show('gaiak')>Gehitu Gaia</button>";
-       html +="<table><tr><th>Izena</th><th> Doc</th><th> Bektorea</th></tr>";
+      var html = "<span onclick=MoodRec.Panel.show('gaiak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Gaia</span>";
+       html +="<table  class='table'><tr><th>Izena</th><th> Doc</th><th> Bektorea</th></tr>";
        res.result.forEach(function(gaia){
-          html+="<tr><td>"+gaia.name+"</td><td>"+gaia.docs+"</td><td>"+gaia.spaceVector+"</td></tr>";
+          html+="<tr><td>"+gaia.name+"</td><td>"+gaia.docs+"</td><td>"+gaia.spaceVector+"</td><td onclick=MoodRec.remove('"+gaia._id.$oid+"','gaia')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
