@@ -105,6 +105,9 @@ public class HttpServer extends RouterNanoHTTPD {
                  }else
                   text = dbi.getStudent(id);
               }
+              else if (cmd.equals("remove")){
+                  text = dbi.removeStudent(id);
+              }
 
                 return text;
             }
@@ -199,6 +202,9 @@ public class HttpServer extends RouterNanoHTTPD {
             }
             else if (cmd.equals("update")){
                 //text = dbi.getStudent(id);
+            }
+            else if (cmd.equals("remove")){
+                text = dbi.removeSubject(id);
             }
             else if (cmd.equals("get")){
                 if (id.equals("none")){

@@ -55,6 +55,14 @@ public String addStudent (String name){
   studentSkills.insertOne(doc);
   return doc.get("_id").toString();
 }
+/*
+  remove student data
+
+*/
+public String removeStudent (String id){
+  studentSkills.deleteOne(new Document("_id", new ObjectId(id)));
+  return "{\"result\":\"ok\"}";
+}
 public void prinStudentsData (){
   Bkt bkt = new Bkt();
   MongoCursor<Document> cursor = studentSkills.find().iterator();
@@ -298,6 +306,13 @@ public String addSubject (String name,String vector,String doc){
   subj.put("spaceVector",vector);
   subject.insertOne(subj);
   return subj.get("_id").toString();
+}
+/*
+  remove subject
+*/
+public String removeSubject (String id){
+  subject.deleteOne(new Document("_id", new ObjectId(id)));
+  return "{\"result\":\"ok\"}";
 }
 /*
   get all subject

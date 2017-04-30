@@ -47,11 +47,23 @@
          MoodRec.renderArikerak(document.querySelector('#ariketak'));
       })
     }
+    if (type=="gaia"){
+      callBackend('/subject/remove/'+id+'/none/none',function(err,result){
+         if (err) console.error(err);
+         MoodRec.renderGaiak(document.querySelector('#gaiak'));
+      })
+    }
+    if (type=="ikaslea"){
+      callBackend('/studentSkills/remove/'+id+'/none/none',function(err,result){
+         if (err) console.error(err);
+         MoodRec.renderIkasleak(document.querySelector('#ikasleak'));
+      })
+    }
  }
  var renderArikerak = function (el){
     callBackend('/exerciseAttr/get/null/none/none',function(err,res){
       if (err) console.error("Error getting exercies");
-      var html = "<span onclick=MoodRec.Panel.show('ariketak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ariketa</span>";
+      var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('ariketak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ariketa</span>";
        html +="<table class='table'><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th><th></th></tr>";
        res.result.forEach(function(ex){
           html+="<tr><td>"+ex.id+"</td><td>"+ex.subjects+"</td><td>"+ex.spaceVector+"</td><td onclick=MoodRec.remove('"+ex._id.$oid+"','ariketa')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
@@ -65,7 +77,7 @@
  var renderIkasleak = function (el){
     callBackend('/studentSkill/get/none/none/true',function(err,res){
       if (err) console.error("Error getting exercies");
-      var html = "<span onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ikaslea</span>";
+      var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ikaslea</span>";
        html +="<table  class='table'><tr><th>Id</th><th> Izena</th><th> Ezagupenak</th></tr>";
        res.result.forEach(function(ik){
           html+="<tr><td>"+ik._id.$oid+"</td><td>"+ik.name+"</td><td>";
@@ -83,7 +95,7 @@
  var renderGaiak = function (el){
     callBackend('/subject/get/none/none/none',function(err,res){
       if (err) console.error("Error getting exercies");
-      var html = "<span onclick=MoodRec.Panel.show('gaiak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Gaia</span>";
+      var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('gaiak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Gaia</span>";
        html +="<table  class='table'><tr><th>Izena</th><th> Doc</th><th> Bektorea</th></tr>";
        res.result.forEach(function(gaia){
           html+="<tr><td>"+gaia.name+"</td><td>"+gaia.docs+"</td><td>"+gaia.spaceVector+"</td><td onclick=MoodRec.remove('"+gaia._id.$oid+"','gaia')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
@@ -116,7 +128,10 @@
 
  var Panel = function(){
    return {
-     ikasleakTemplate:`<div class="panel" id="pIkasleak"><h3>Ikaslea gehitu</h3>
+     ikasleakTemplate:`<div class="panel" id="pIkasleak">
+                      <span style='position:relative;top:10px;left:90%;' onclick='MoodRec.Panel.hide()'> X </span>
+                      <h3>Ikaslea gehitu</h3>
+
                        <fieldset>
                        <legend> Izena</legend>
                         <input id="ikIzena" value="">
@@ -127,7 +142,9 @@
                        </fieldset>
                        <button> Gehitu</button>
                        </div>`,
-     ariketakTemplate:`<div class="panel" id="pAriketak"><h3>Ariketa gehitu</h3>
+     ariketakTemplate:`<div class="panel" id="pAriketak">
+                      <span style='position:relative;top:10px;left:90%;' onclick='MoodRec.Panel.hide()'> X </span>
+                      <h3>Ariketa gehitu</h3>
                        <fieldset>
                        <legend> Id (MoodleId)</legend>
                         <input id="arId" value="">
@@ -142,7 +159,9 @@
                        </fieldset>
                        <button onclick="MoodRec.Panel.save('ariketa')"> Gorde</button>
                        </div>`,
-     gaiakTemplate:`<div class="panel" id="pGaiak"><h3>Gaia gehitu</h3>
+     gaiakTemplate:`<div class="panel" id="pGaiak">
+                    <span style='position:relative;top:10px;left:90%;' onclick='MoodRec.Panel.hide()'> X </span>  
+                      <h3>Gaia gehitu</h3>
                        <fieldset>
                        <legend> Izena</legend>
                         <input id="gIzena" value="" placeholder="Estadistika">
@@ -199,6 +218,13 @@
             MoodRec.renderGaiak(document.querySelector('#gaiak'));
           });
         }
+      },
+      selectMenu:function(el){
+          var menus = document.querySelector('ul').children;
+          for(m in menus){
+            if(menus[m].className)  menus[m].querySelector('span').className =  menus[m].querySelector('span').className.replace(/selected/,'');
+          }
+          el.className="selected";
       }
 
    }

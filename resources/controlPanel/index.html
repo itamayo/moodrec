@@ -50,6 +50,13 @@ table{
   color:white;
   font-weight: bold;
 }
+.selected{
+   color:white;
+   font-style: bold;
+}
+li,span{
+  cursor: pointer;
+}
 </style>
 
 </head>
@@ -58,9 +65,9 @@ table{
     <p id="title"> MoodRec</p>
     <ul class="w3-ul">
     <li class="w3-hover-blue">
-      <span  onclick=MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</span></li>
-  <li class="w3-hover-blue">    <span  onclick=MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</span></li>
-  <li class="w3-hover-blue">    <span  onclick=MoodRec.renderGaiak(document.querySelector('#gaiak'))> Gaiak</span></li>
+      <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</span></li>
+  <li class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</span></li>
+  <li class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderGaiak(document.querySelector('#gaiak'))> Gaiak</span></li>
 </ul>
   </div>
   <div id="ariketak" class="ikusezin" ></div>
