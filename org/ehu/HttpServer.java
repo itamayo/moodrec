@@ -156,6 +156,9 @@ public class HttpServer extends RouterNanoHTTPD {
             else if (cmd.equals("get")){
                 text = dbi.getStudent(id);
             }
+            else if (cmd.equals("remove")){
+                text = dbi.removeStudent(id);
+            }
 
 
             return text;
@@ -311,24 +314,6 @@ public class HttpServer extends RouterNanoHTTPD {
         }
 
     }
-    static public class StreamUrl extends DefaultStreamHandler {
-
-        @Override
-        public String getMimeType() {
-            return "text/plain";
-        }
-
-        @Override
-        public IStatus getStatus() {
-            return Status.OK;
-        }
-
-        @Override
-        public InputStream getData() {
-            return new ByteArrayInputStream("a stream of data ;-)".getBytes());
-        }
-
-    }
 
     public static class StaticPageTestHandler extends StaticPageHandler {
 
@@ -362,7 +347,6 @@ public class HttpServer extends RouterNanoHTTPD {
         addRoute("/subject/:cmd/:id/:vector/:doc", SubjectHandler.class);
         addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects", ExerciseAttributesHandler.class);
         addRoute("/studentSkill/:cmd/:skill/:id/:correct", StudentSkillHandler.class);
-        addRoute("/stream", StreamUrl.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
     }
     public static void run () {

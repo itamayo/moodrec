@@ -54,7 +54,7 @@
       })
     }
     if (type=="ikaslea"){
-      callBackend('/studentSkills/remove/'+id+'/none/none',function(err,result){
+      callBackend('/student/remove/'+id,function(err,result){
          if (err) console.error(err);
          MoodRec.renderIkasleak(document.querySelector('#ikasleak'));
       })
@@ -77,7 +77,8 @@
  var renderIkasleak = function (el){
     callBackend('/studentSkill/get/none/none/true',function(err,res){
       if (err) console.error("Error getting exercies");
-      var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ikaslea</span>";
+      var html = `<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleEzagupena')><img width=30 height=30 src="/browse/icons/add.png">Gehitu Ezagupena</span>
+      <span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/addUser.png'>Gehitu Ikaslea</span>`;
        html +="<table  class='table'><tr><th>Id</th><th> Izena</th><th> Ezagupenak</th></tr>";
        res.result.forEach(function(ik){
           html+="<tr><td>"+ik._id.$oid+"</td><td>"+ik.name+"</td><td>";
@@ -128,23 +129,29 @@
 
  var Panel = function(){
    return {
-     ikasleakTemplate:`<div class="panel" id="pIkasleak">
-                      <span style='position:relative;top:10px;left:90%;' onclick='MoodRec.Panel.hide()'> X </span>
-                      <h3>Ikaslea gehitu</h3>
-
+     ikasleEzagupenaTemplate:`<div class="panel" id="pIkasleak">
+                      <span style='position:relative;top:0px;left:90%;color:green;' onclick='MoodRec.Panel.hide()'> X </span>
                        <fieldset>
-                       <legend> Izena</legend>
+                       <legend> Erabiltzaile Id-a</legend>
                         <input id="ikIzena" value="">
                        </fieldset>
                        <fieldset>
-                       <legend> Ezagupenak</legend>
+                       <legend> Ezagupena</legend>
                         <input id="ikSkill" value="">
                        </fieldset>
-                       <button> Gehitu</button>
+                       <button  onclick="MoodRec.Panel.save('ikasleEzagupena')"> Gehitu</button>
                        </div>`,
+   ikasleakTemplate:`<div class="panel" id="pIkasleak">
+                    <span style='position:relative;top:0px;left:90%;color:green' onclick='MoodRec.Panel.hide()'> X </span>
+                     <fieldset>
+                     <legend> Izena</legend>
+                      <input id="ikIzena" value="">
+                     </fieldset>
+                     <fieldset>
+                     <button  onclick="MoodRec.Panel.save('ikaslea')"> Gehitu</button>
+                     </div>`,
      ariketakTemplate:`<div class="panel" id="pAriketak">
-                      <span style='position:relative;top:10px;left:90%;' onclick='MoodRec.Panel.hide()'> X </span>
-                      <h3>Ariketa gehitu</h3>
+                      <span style='position:relative;top:0px;left:90%;color:green' onclick='MoodRec.Panel.hide()'> X </span>
                        <fieldset>
                        <legend> Id (MoodleId)</legend>
                         <input id="arId" value="">
@@ -160,8 +167,7 @@
                        <button onclick="MoodRec.Panel.save('ariketa')"> Gorde</button>
                        </div>`,
      gaiakTemplate:`<div class="panel" id="pGaiak">
-                    <span style='position:relative;top:10px;left:90%;' onclick='MoodRec.Panel.hide()'> X </span>  
-                      <h3>Gaia gehitu</h3>
+                    <span style='position:relative;top:0px;left:90%;color:green' onclick='MoodRec.Panel.hide()'> X </span>
                        <fieldset>
                        <legend> Izena</legend>
                         <input id="gIzena" value="" placeholder="Estadistika">
@@ -181,6 +187,11 @@
              var x = document.querySelector('.panel');
              if (x) document.body.removeChild(x);
              document.body.innerHTML += this.ikasleakTemplate;
+          }
+          if (id=="ikasleEzagupena"){
+             var x = document.querySelector('.panel');
+             if (x) document.body.removeChild(x);
+             document.body.innerHTML += this.ikasleEzagupenaTemplate;
           }
           if (id=="gaiak"){
              var x = document.querySelector('.panel');
@@ -216,6 +227,23 @@
             if(err) console.error("Error saving",err);
             MoodRec.Panel.hide();
             MoodRec.renderGaiak(document.querySelector('#gaiak'));
+          });
+        }
+        else if(type=="ikasleEzagupena"){
+          var skill = document.querySelector('#ikSkill').value;
+          var izena = document.querySelector('#ikIzena').value;
+          callBackend('/studentSkill/add/'+skill+'/'+izena+'/none',function(err,result){
+            if(err) console.error("Error saving",err);
+            MoodRec.Panel.hide();
+            MoodRec.renderIkasleak(document.querySelector('#ikasleak'));
+          });
+        }
+        else if(type=="ikaslea"){
+          var izena = document.querySelector('#ikIzena').value;
+          callBackend('/student/create/'+izena,function(err,result){
+            if(err) console.error("Error saving",err);
+            MoodRec.Panel.hide();
+            MoodRec.renderIkasleak(document.querySelector('#ikasleak'));
           });
         }
       },
