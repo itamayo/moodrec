@@ -34,3 +34,7 @@ Webgune basiko bat sortu dut garatzen noan implementazioak probatzeko, honako he
 oraingoz BKT implementatzen du.
 
 http://localhost:8080/browse/tests/index.html
+
+# Edukiaren kontrol panela
+
+http://localhost:8080/browse/controlPanel/
