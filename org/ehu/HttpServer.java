@@ -126,7 +126,11 @@ public class HttpServer extends RouterNanoHTTPD {
                 String text = getText(urlParams, session);
                 ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
                 int size = text.getBytes().length;
-                return Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+                Response response = Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+                response.addHeader("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT");
+                response.addHeader("Access-Control-Allow-Origin",  "*");
+                response.addHeader("Access-Control-Allow-Headers", "X-Requested-With");
+                return response;
             }
 
         }
@@ -177,7 +181,11 @@ public class HttpServer extends RouterNanoHTTPD {
             String text = getText(urlParams, session);
             ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
             int size = text.getBytes().length;
-            return Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+            Response response = Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+            response.addHeader("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT");
+            response.addHeader("Access-Control-Allow-Origin",  "*");
+            response.addHeader("Access-Control-Allow-Headers", "X-Requested-With");
+            return response;
         }
 
     }
@@ -246,7 +254,11 @@ public class HttpServer extends RouterNanoHTTPD {
             String text = getText(urlParams, session);
             ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
             int size = text.getBytes().length;
-            return Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+            Response response = Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+            response.addHeader("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT");
+            response.addHeader("Access-Control-Allow-Origin",  "*");
+            response.addHeader("Access-Control-Allow-Headers", "X-Requested-With");
+            return response;
         }
 
     }
@@ -310,7 +322,11 @@ public class HttpServer extends RouterNanoHTTPD {
             String text = getText(urlParams, session);
             ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
             int size = text.getBytes().length;
-            return Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+            Response response = Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+            response.addHeader("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT");
+            response.addHeader("Access-Control-Allow-Origin",  "*");
+            response.addHeader("Access-Control-Allow-Headers", "X-Requested-With");
+            return response;
         }
 
     }
