@@ -38,3 +38,17 @@ http://localhost:8080/browse/tests/index.html
 # Edukiaren kontrol panela
 
 http://localhost:8080/browse/controlPanel/
+
+# Moodlen 
+
+Moodleen probatu ahal izateko hainbat pasu eman behar dira:
+
+- MoodRec zerbitzaira martxan izan.
+- Tampermonkey instalatu http://tampermonkey.net/
+- moodleResource-n dagoen plugin-a instalatu tampermokey bidez.
+- Moodlen sartu ta bertan perfilatu nahi den quiz-ra jo, erantzuteko moduan.
+- Ariketak bana bana perfilatu
+
+Oraingoz, ariketak erregistratzeko aukera ematen du admin-ari, hurrengo pausua
+irakasle perfilean ikaslearen datuak jasotzen joatea izango da. Ta azken pausua,
+ikasleari gomendioa txertatzea...
