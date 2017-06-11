@@ -333,11 +333,12 @@ public String getAllSubjects (){
 /*
   add exerciseAttr
 */
-public String addExerciseAttr (String id,String vector,String subjects){
+public String addExerciseAttr (String id,String vector,String subjects,String response){
   Document subj = new Document();
   subj.put("subjects",Arrays.asList(subjects));
   subj.put("id",id);
   subj.put("spaceVector",vector);
+  subj.put("response",response);
   exerciseAttr.insertOne(subj);
   return subj.get("_id").toString();
 }

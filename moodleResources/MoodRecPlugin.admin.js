@@ -17,11 +17,7 @@
      var ids = questionId.match(/\d+/g);
      var atemps = ids[0];
      var id = ids[1];
-     var student = {};
-     var studentInfo = document.querySelector('[title="View profile"]');
-     user.name = studentInfo.getAttribute('title');
-     user.id = studentInfo.href.split("=")[1];
-     console.log(user,id,atemps);
+     console.log(id,atemps);
      setMoodRecQuestion(id);
      },1500);
     function setMoodRecQuestion (id){
@@ -54,7 +50,8 @@
           var _id = id;
           var skill = document.querySelector('#bektoreEz').value;
           var sv = document.querySelector('#bektoreaNorm').value;
-          callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill,function(err,result){
+          var er = document.querySelector('#erantzunZuzena').value;
+          callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill+'/'+er,function(err,result){
             if(err) console.error("Error saving",err);
             alert("Ondo gorde da");
           });

@@ -280,8 +280,10 @@ public class HttpServer extends RouterNanoHTTPD {
             String cmd = urlParams.get("cmd");
             String vector = urlParams.get("vector");
             String subjects = urlParams.get("subjects");
+            String answer = urlParams.get("answer");
+
             if (cmd.equals("create")){
-              String _id = dbi.addExerciseAttr(id,vector,subjects);
+              String _id = dbi.addExerciseAttr(id,vector,subjects,answer);
               text = "{\"response\":\"exerciseAttr added\",\"id\":\""+_id+"\"}";
             }
             else if (cmd.equals("update")){
@@ -361,7 +363,7 @@ public class HttpServer extends RouterNanoHTTPD {
         super.addMappings();
         addRoute("/student/:cmd/:id", StudentHandler.class);
         addRoute("/subject/:cmd/:id/:vector/:doc", SubjectHandler.class);
-        addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects", ExerciseAttributesHandler.class);
+        addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:answer", ExerciseAttributesHandler.class);
         addRoute("/studentSkill/:cmd/:skill/:id/:correct", StudentSkillHandler.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
     }
