@@ -17,8 +17,42 @@
      var ids = questionId.match(/\d+/g);
      var atemps = ids[0];
      var id = ids[1];
-     console.log(id,atemps);
-     setMoodRecQuestion(id);
+     var student = {};
+     var studentInfo = document.querySelector('[title="View profile"]');
+     var ex = {};
+     student.name = studentInfo.innerHTML;
+     student.id = studentInfo.href.split("=")[1];
+     console.log(student,"quiz_id",id,"atemps",atemps);
+     MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none",function(err,res){
+       if (err) {console.warn(err);}
+       ex = res;
+     });
+     document.querySelector('[type=submit],[value=next]').addEventListener('click',function(){
+         var res = document.querySelector('[type=radio][checked]');
+         var label = document.querySelector('[for=\"'+res.id+'\"]');
+         var tmp = label.innerHTML.split(" ");
+         var erantzuna ="-999";
+
+         if (tmp.length>1){
+            erantzuna = tmp[1];
+         }
+         else{
+           erantzuna = tmp[0];
+         }
+         /*res = Array.prototype.slice.call(res);
+         var erantzuna = res.filter(function(el){if(el.checked)return true; else return false;})[0] || -1;*/
+         if (res.value){
+           console.log('bidalitako erantzuna',erantzuna);
+           console.log(ex.skill);
+           MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+erantzuna+"/"+id,function(err,res){
+           if (err) {console.warn("error",err);}
+           else {
+
+           }
+         });
+     }
+     });
+     if (student.name=="Admin User")setMoodRecQuestion(id);
      },1500);
     function setMoodRecQuestion (id){
          var panel = document.createElement('div');
@@ -60,7 +94,7 @@
         panel.appendChild(bidaliB);
         document.body.appendChild(panel);
     };
-    var callBackend = function (url,cb){
+    MoodRec.callBackend = function (url,cb){
      var xmlhttp = new XMLHttpRequest();
      xmlhttp.onreadystatechange = function() {
          console.log(this.readyState,this.status);

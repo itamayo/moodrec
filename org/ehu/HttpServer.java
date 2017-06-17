@@ -83,6 +83,7 @@ public class HttpServer extends RouterNanoHTTPD {
               String cmd = urlParams.get("cmd");
               String skill = urlParams.get("skill");
               String correct = urlParams.get("correct");
+              String exId = urlParams.get("exId");
               double pknow = 0.0;
               if (cmd.equals("add")){
                 String _id = dbi.addSkill(id,skill);
@@ -91,11 +92,17 @@ public class HttpServer extends RouterNanoHTTPD {
               else if (cmd.equals("update")){
                   Bkt bkt = new Bkt();
                   double savedPknow = dbi.getSkillPknow(id,skill);
+                  if (exId!="none"){
+                     correct = dbi.getAnswer(exId,correct);
+                     System.out.println(exId);
+                  }
                   if (correct.equals("true")) pknow = bkt.updateMastering(true,savedPknow);
                   else  pknow = bkt.updateMastering(false,savedPknow);
                   text = dbi.updateSkill(id,skill,pknow);
                   text = "{\"skill\":\""+skill+"\",\"pknow\":"+pknow+"}";
                   System.out.println(text);
+
+
               }
               else if (cmd.equals("get")){
                 System.out.println("ID"+id);
@@ -293,7 +300,11 @@ public class HttpServer extends RouterNanoHTTPD {
                 text = dbi.removeExercise(id);
             }
             else if (cmd.equals("get")){
+               if (id.equals("none"))
                 text = dbi.getExerciseAttr();
+               else
+                 text = dbi.getExercicesById(id);
+               System.out.println(text);
             }
             else if (cmd.equals("compare")){
                 String[] vect1 = urlParams.get("subjects").split(",");
@@ -364,7 +375,7 @@ public class HttpServer extends RouterNanoHTTPD {
         addRoute("/student/:cmd/:id", StudentHandler.class);
         addRoute("/subject/:cmd/:id/:vector/:doc", SubjectHandler.class);
         addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:answer", ExerciseAttributesHandler.class);
-        addRoute("/studentSkill/:cmd/:skill/:id/:correct", StudentSkillHandler.class);
+        addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/", StudentSkillHandler.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
     }
     public static void run () {

@@ -226,6 +226,35 @@ catch (Exception e){
   return tnp;
 }
 /*
+  get correct answer
+*/
+
+public String getAnswer (String exId,String correct){
+  String ans ="";
+  Document query = new Document();
+  query.put("id",exId);
+   MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+      Document c = cursor.next();
+       ans = (String)c.get("answer");
+      if (ans.equals(correct)){
+         ans = "true";
+      }
+      else ans ="false";
+
+   }
+   // SKill is new for student
+   else{
+     System.out.println("Warning exerciseAttr does not exists, please add before !");
+   }
+  } finally {
+     cursor.close();
+  }
+  return ans;
+}
+/*
   get saved pknow of student skill
 */
 
@@ -366,5 +395,30 @@ public String getExerciseAttr (){
   json+="]}";
   return json;
 }
+/*
+get exercises by id
+*/
+public String getExercicesById (String id){
+  String json ="";
+  Document query = new Document();
+  query.put("id",id);
+   MongoCursor<Document> cursor = exerciseAttr.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+       Document c = cursor.next();
+       List<String> subjects = (List<String>)c.get("subjects");
+       json = "{\"skill\":"+"\""+subjects.get(0)+"\"}";
 
+
+   }
+   // SKill is new for student
+   else{
+     System.out.println("Warning Ids exerciseAttr does not exists, please add before !");
+   }
+  } finally {
+     cursor.close();
+  }
+  return json;
+}
 }
