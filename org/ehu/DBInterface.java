@@ -233,12 +233,13 @@ public String getAnswer (String exId,String correct){
   String ans ="";
   Document query = new Document();
   query.put("id",exId);
-   MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+   MongoCursor<Document> cursor = exerciseAttr.find(query).iterator();
   try {
     // SKill already exists
     if (cursor.hasNext()){
       Document c = cursor.next();
-       ans = (String)c.get("answer");
+       ans = (String)c.get("response");
+       System.out.println("ans"+ans+correct);
       if (ans.equals(correct)){
          ans = "true";
       }
@@ -248,6 +249,7 @@ public String getAnswer (String exId,String correct){
    // SKill is new for student
    else{
      System.out.println("Warning exerciseAttr does not exists, please add before !");
+
    }
   } finally {
      cursor.close();
@@ -290,7 +292,10 @@ public double getSkillPknow (String stdId,String skill){
    }
    // SKill is new for student
    else{
-     System.out.println("Warning Skill does not exists, please add before !");
+     System.out.println("Adding no existing skill for user, with default values");
+     this.addSkill(stdId,skill);
+     return 0.3;
+
    }
   } finally {
      cursor.close();

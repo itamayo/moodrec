@@ -19,10 +19,40 @@
      var id = ids[1];
      var student = {};
      var studentInfo = document.querySelector('[title="View profile"]');
-     user.name = studentInfo.getAttribute('title');
-     user.id = studentInfo.href.split("=")[1];
-     console.log(user,id,atemps);
-     setMoodRecQuestion(id);
+     var ex = {};
+     student.name = studentInfo.innerHTML;
+     student.id = studentInfo.href.split("=")[1];
+     console.log(student,"quiz_id",id,"atemps",atemps);
+     MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none",function(err,res){
+       if (err) {console.warn(err);}
+       ex = res;
+     });
+     document.querySelector('[type=submit],[value=next]').addEventListener('click',function(){
+         var res = document.querySelector('[type=radio][checked]');
+         var label = document.querySelector('[for=\"'+res.id+'\"]');
+         var tmp = label.innerHTML.split(" ");
+         var erantzuna ="-999";
+         if (tmp.length>1){
+            erantzuna = tmp[1];
+         }
+         else{
+           erantzuna = tmp[0];
+         }
+         /*res = Array.prototype.slice.call(res);
+         var erantzuna = res.filter(function(el){if(el.checked)return true; else return false;})[0] || -1;*/
+         if (res.value){
+           debugger;
+           console.log('bidalitako erantzuna',erantzuna);
+           console.log(ex.skill);
+           MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+erantzuna+"/"+id,function(err,res){
+           if (err) {console.warn("error",err);}
+           else {
+
+           }
+         });
+     }
+     });
+     if (student.name=="Admin User")setMoodRecQuestion(id);
      },1500);
     function setMoodRecQuestion (id){
          var panel = document.createElement('div');
@@ -54,7 +84,8 @@
           var _id = id;
           var skill = document.querySelector('#bektoreEz').value;
           var sv = document.querySelector('#bektoreaNorm').value;
-          callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill,function(err,result){
+          var er = document.querySelector('#erantzunZuzena').value;
+          MoodRec.callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill+'/'+er,function(err,result){
             if(err) console.error("Error saving",err);
             alert("Ondo gorde da");
           });
@@ -63,7 +94,7 @@
         panel.appendChild(bidaliB);
         document.body.appendChild(panel);
     };
-    var callBackend = function (url,cb){
+   window.MoodRec.callBackend = function (url,cb){
      var xmlhttp = new XMLHttpRequest();
      xmlhttp.onreadystatechange = function() {
          console.log(this.readyState,this.status);
