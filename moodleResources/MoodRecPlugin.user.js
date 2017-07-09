@@ -26,6 +26,7 @@
      MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none",function(err,res){
        if (err) {console.warn(err);}
        ex = res;
+
      });
      document.querySelector('[type=submit],[value=next]').addEventListener('click',function(){
          var res = document.querySelector('[type=radio][checked]');
@@ -41,13 +42,16 @@
          /*res = Array.prototype.slice.call(res);
          var erantzuna = res.filter(function(el){if(el.checked)return true; else return false;})[0] || -1;*/
          if (res.value){
-           debugger;
            console.log('bidalitako erantzuna',erantzuna);
            console.log(ex.skill);
            MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+erantzuna+"/"+id,function(err,res){
            if (err) {console.warn("error",err);}
            else {
-
+            //MoodRec.showRecommendations("58d7e8755984581023fcb8e3")
+              if (res.pknow<0.51)MoodRec.callBackend('/subject/getRecommendation/none/'+ex.spaceVector+'/none',function(err,res){
+                  MoodRec.showRecommendations(res);
+              });
+            console.log(res);
            }
          });
      }
@@ -93,6 +97,33 @@
         };
         panel.appendChild(bidaliB);
         document.body.appendChild(panel);
+    };
+    window.MoodRec.showRecommendations = function (data){
+         var panel = document.createElement('div');
+         var title = document.createElement('div');
+         title.style.height="30px";
+         title.style.background="#444";
+         title.style.color="white";
+         title.style.textAlign="center";
+         title.style.padding="5px";
+         title.innerHTML ="Recomendations";
+         panel.appendChild(title);
+         panel.style.width ="300px";
+         panel.style.position= "absolute";
+         panel.style.background="white";
+         panel.style.zIndex = "9999";
+         panel.style.top ="5%";
+         panel.style.left="80%";
+         panel.style.paddingBottom="5px";
+         panel.style.paddingLeft="5px";
+         panel.style.border="1px solid black";
+         var html = "";
+         data.docs.forEach(function(doc){
+             html+="<p> <a href='#'>" + doc.docs.join(',')+"</a></p>";
+         });
+         panel.innerHTML += html;
+        document.body.appendChild(panel);
+        alert("");
     };
    window.MoodRec.callBackend = function (url,cb){
      var xmlhttp = new XMLHttpRequest();

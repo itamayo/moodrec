@@ -413,7 +413,8 @@ public String getExercicesById (String id){
     if (cursor.hasNext()){
        Document c = cursor.next();
        List<String> subjects = (List<String>)c.get("subjects");
-       json = "{\"skill\":"+"\""+subjects.get(0)+"\"}";
+       String spaceVector = (String)c.get("spaceVector");
+       json = "{\"skill\":"+"\""+subjects.get(0)+"\",\"spaceVector\":"+"\""+spaceVector+"\"}";
 
 
    }
