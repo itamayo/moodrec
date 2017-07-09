@@ -48,15 +48,24 @@
            if (err) {console.warn("error",err);}
            else {
             //MoodRec.showRecommendations("58d7e8755984581023fcb8e3")
-              if (res.pknow<0.51)MoodRec.callBackend('/subject/getRecommendation/none/'+ex.spaceVector+'/none',function(err,res){
+              if (res.pknow<0.51)
+                  MoodRec.callBackend('/subject/getRecommendation/none/'+ex.spaceVector+'/none',function(err,res){
+                  localStorage.setItem("docs",JSON.stringify(res));
                   MoodRec.showRecommendations(res);
               });
+              else {
+                   localStorage.setItem("docs",'{}');
+              }
             console.log(res);
            }
          });
      }
      });
      if (student.name=="Admin User")setMoodRecQuestion(id);
+     else {
+          var docs = JSON.parse(localStorage.getItem('docs'));
+          if (docs) MoodRec.showRecommendations(docs);
+     }
      },1500);
     function setMoodRecQuestion (id){
          var panel = document.createElement('div');
@@ -99,7 +108,19 @@
         document.body.appendChild(panel);
     };
     window.MoodRec.showRecommendations = function (data){
-         var panel = document.createElement('div');
+         var panel = document.querySelector('#recPanel');
+         if (panel){
+              var html = "";
+             panel.innerHTML ="";
+             data.docs.forEach(function(doc){
+                 html+="<p> <a href='#'>" + doc.docs.join(',')+"</a></p>";
+             });
+             panel.innerHTML += html;
+             document.body.appendChild(panel);
+         }
+        else{
+         panel = document.createElement('div');
+         panel.id ="recPanel";
          var title = document.createElement('div');
          title.style.height="30px";
          title.style.background="#444";
@@ -117,13 +138,15 @@
          panel.style.paddingBottom="5px";
          panel.style.paddingLeft="5px";
          panel.style.border="1px solid black";
+
          var html = "";
          data.docs.forEach(function(doc){
              html+="<p> <a href='#'>" + doc.docs.join(',')+"</a></p>";
          });
          panel.innerHTML += html;
         document.body.appendChild(panel);
-        alert("");
+        }
+
     };
    window.MoodRec.callBackend = function (url,cb){
      var xmlhttp = new XMLHttpRequest();
