@@ -13,16 +13,16 @@
     window.MoodRec = {};
     MoodRec.backend = "http://localhost:8080";
     setTimeout(function(e){
-     var questionId = document.querySelector('.questionflagvalue').id;
-     var ids = questionId.match(/\d+/g);
-     var atemps = ids[0];
-     var id = ids[1];
+     var questionId = document.querySelector('.questionflagpostdata').value;
+     var ids = questionId.split('&')[2];
+     console.log(ids);
+     var id = ids.split('=')[1];
      var student = {};
      var studentInfo = document.querySelector('[title="View profile"]');
      var ex = {};
      student.name = studentInfo.innerHTML;
      student.id = studentInfo.href.split("=")[1];
-     console.log(student,"quiz_id",id,"atemps",atemps);
+     console.log(student,"quiz_id",id);
      MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none",function(err,res){
        if (err) {console.warn(err);}
        ex = res;

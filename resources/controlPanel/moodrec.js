@@ -20,7 +20,7 @@
         exercises.forEach(function(ex,i){
             div.innerHTML+="<h2 id='ans"+i+"'>Ariketa "+i +" skill: " +ex.skill +" Hit: " +ex.correctAnswer + " </h2>";
             (function(i){
-              MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+ex.correctAnswer,function(err,res){
+              MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+ex.correctAnswer+"/none",function(err,res){
               if (err) {console.warn(err);}
               else {
 
@@ -61,7 +61,7 @@
     }
  }
  var renderArikerak = function (el){
-    callBackend('/exerciseAttr/get/null/none/none',function(err,res){
+    callBackend('/exerciseAttr/get/none/none/none/none/',function(err,res){
       if (err) console.error("Error getting exercies");
       var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('ariketak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ariketa</span>";
        html +="<table class='table'><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th><th></th></tr>";
@@ -75,7 +75,7 @@
 
  }
  var renderIkasleak = function (el){
-    callBackend('/studentSkill/get/none/none/true',function(err,res){
+    callBackend('/studentSkill/get/none/none/true/none',function(err,res){
       if (err) console.error("Error getting exercies");
       var html = `<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleEzagupena')><img width=30 height=30 src="/browse/icons/add.png">Gehitu Ezagupena</span>
       <span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/addUser.png'>Gehitu Ikaslea</span>`;
