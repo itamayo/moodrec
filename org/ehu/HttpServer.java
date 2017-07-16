@@ -115,6 +115,32 @@ public class HttpServer extends RouterNanoHTTPD {
               else if (cmd.equals("remove")){
                   text = dbi.removeStudent(id);
               }
+              else if (cmd.equals("getUserRecommendation")){
+                  System.out.println(skill);
+                  String[] vect1 = urlParams.get("skill").split(",");
+                /*  double[] vec1 = Arrays.stream(vect1)
+                          .mapToDouble(Double::parseDouble)
+                          .toArray();*/
+                /* Get user pknow, and create low pknown vector */
+                double[] vec1 = new double[1];
+                for (int i =0; i<vect1.length;i++){
+                  double pknown = dbi.getSkillPknow(id,vect1[i]);
+                  if (pknown<0.5){
+                    vec1 = push(vec1,pknown);
+                  }
+                  else {
+                    /** remove skill whether knowns **/
+                    final List<String> list =  new ArrayList<String>();
+                    Collections.addAll(list, vect1);
+                    list.remove(vect1[i]);
+                    vect1 = list.toArray(new String[list.size()]);
+                  }
+                }
+                /* Normalize vector before send */
+                 String result = dbi.getRelatedSubjectByPknows(vec1,vect1);
+                 text = result;
+
+              }
 
                 return text;
             }
@@ -234,6 +260,7 @@ public class HttpServer extends RouterNanoHTTPD {
                   text = dbi.getStudent(id);
                 }
             }
+            /* Recomendation by exercises result */
             else if (cmd.equals("getRecommendation")){
                 System.out.println(vector);
                 String[] vect1 = urlParams.get("vector").split(",");
@@ -245,6 +272,7 @@ public class HttpServer extends RouterNanoHTTPD {
                text = result;
 
             }
+
 
 
             return text;
@@ -383,5 +411,12 @@ public class HttpServer extends RouterNanoHTTPD {
     public static void run () {
           ServerRunner.run(HttpServer.class);
       }
+  private static double[] push(double[] array, double push) {
+      double[] longer = new double[array.length + 1];
+      for (int i = 0; i < array.length; i++)
+          longer[i] = array[i];
+      longer[array.length] = push;
+      return longer;
+  }
 
 }
