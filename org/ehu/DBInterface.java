@@ -334,10 +334,11 @@ public String updateSkill (String studentid,String skill,Double pknow){
 /*
   add subject
 */
-public String addSubject (String name,String vector,String doc){
+public String addSubject (String name,String skills,String vector,String doc){
   Document subj = new Document("id", name);
   subj.put("docs",Arrays.asList(doc));
   subj.put("spaceVector",vector);
+  subj.put("skills",skills);
   subject.insertOne(subj);
   return subj.get("_id").toString();
 }

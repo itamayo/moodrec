@@ -214,8 +214,10 @@ public class HttpServer extends RouterNanoHTTPD {
             String cmd = urlParams.get("cmd");
             String vector = urlParams.get("vector");
             String doc = urlParams.get("doc");
+            String skills = urlParams.get("skills");
+
             if (cmd.equals("create")){
-              String _id = dbi.addSubject(id,vector,doc);
+              String _id = dbi.addSubject(id,skills,vector,doc);
               text = "{\"response\":\"subject added\",\"id\":\""+_id+"\"}";
             }
             else if (cmd.equals("update")){
@@ -373,7 +375,7 @@ public class HttpServer extends RouterNanoHTTPD {
     public void addMappings() {
         super.addMappings();
         addRoute("/student/:cmd/:id", StudentHandler.class);
-        addRoute("/subject/:cmd/:id/:vector/:doc", SubjectHandler.class);
+        addRoute("/subject/:cmd/:id/:skills/:vector/:doc", SubjectHandler.class);
         addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:answer", ExerciseAttributesHandler.class);
         addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/", StudentSkillHandler.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());

@@ -48,7 +48,7 @@
       })
     }
     if (type=="gaia"){
-      callBackend('/subject/remove/'+id+'/none/none',function(err,result){
+      callBackend('/subject/remove/'+id+'/none/none/none',function(err,result){
          if (err) console.error(err);
          MoodRec.renderGaiak(document.querySelector('#gaiak'));
       })
@@ -94,12 +94,12 @@
 
  }
  var renderGaiak = function (el){
-    callBackend('/subject/get/none/none/none',function(err,res){
+    callBackend('/subject/get/none/none/none/none',function(err,res){
       if (err) console.error("Error getting exercies");
       var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('gaiak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Gaia</span>";
-       html +="<table  class='table'><tr><th>Izena</th><th> Doc</th><th> Bektorea</th></tr>";
+       html +="<table  class='table'><tr><th>Izena</th><th> Doc</th><th> Ezagupenak</th><th> Bektorea</th></tr>";
        res.result.forEach(function(gaia){
-          html+="<tr><td>"+gaia.name+"</td><td>"+gaia.docs+"</td><td>"+gaia.spaceVector+"</td><td onclick=MoodRec.remove('"+gaia._id.$oid+"','gaia')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
+          html+="<tr><td>"+gaia.id+"</td><td>"+gaia.docs+"</td><td>"+gaia.skills+"</td><td>"+gaia.spaceVector+"</td><td onclick=MoodRec.remove('"+gaia._id.$oid+"','gaia')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -177,6 +177,11 @@
                         <input id="gDoc" placeholder="doc.pdf">
                        </fieldset>
                         <fieldset>
+                        <fieldset>
+                        <legend> Ezagupenak (Bek.)</legend>
+                         <input id="gSkills" placeholder="biderkaketa,zatiketa">
+                        </fieldset>
+                         <fieldset>
                        <legend> Doc Bektorea</legend>
                         <input id="gSpaceVector" placeholder="0.4,0.3,0.3">
                        </fieldset>
@@ -223,7 +228,9 @@
           var izena = document.querySelector('#gIzena').value;
           var doc = document.querySelector('#gDoc').value;
           var sv = document.querySelector('#gSpaceVector').value;
-          callBackend('/subject/create/'+izena+'/'+sv+'/'+doc,function(err,result){
+          var gs = document.querySelector('#gSkills').value;
+
+          callBackend('/subject/create/'+izena+'/'+gs+'/'+sv+'/'+doc,function(err,result){
             if(err) console.error("Error saving",err);
             MoodRec.Panel.hide();
             MoodRec.renderGaiak(document.querySelector('#gaiak'));
