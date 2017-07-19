@@ -31,7 +31,7 @@
      document.querySelector('[type=submit],[value=next]').addEventListener('click',function(){
          var res = document.querySelector('[type=radio][checked]');
          var label = document.querySelector('[for=\"'+res.id+'\"]');
-         var tmp = label.innerHTML.split(" ");
+         var tmp = label.textContent.split(" ");
          var erantzuna ="-999";
          if (tmp.length>1){
             erantzuna = tmp[1];
@@ -44,6 +44,7 @@
          if (res.value){
            console.log('bidalitako erantzuna',erantzuna);
            console.log(ex.skill);
+           erantzuna = encodeURIComponent(erantzuna);
            MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+erantzuna+"/"+id,function(err,res){
            if (err) {console.warn("error",err);}
            else {
@@ -98,6 +99,7 @@
           var skill = document.querySelector('#bektoreEz').value;
           var sv = document.querySelector('#bektoreaNorm').value;
           var er = document.querySelector('#erantzunZuzena').value;
+          er = encodeURIComponent(er);
           MoodRec.callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill+'/'+er,function(err,result){
             if(err) console.error("Error saving",err);
             alert("Ondo gorde da");

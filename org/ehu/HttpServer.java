@@ -92,7 +92,7 @@ public class HttpServer extends RouterNanoHTTPD {
               else if (cmd.equals("update")){
                   Bkt bkt = new Bkt();
                   double savedPknow = dbi.getSkillPknow(id,skill);
-                  if (exId!="none"){
+                  if (!exId.equals("none")){
                      correct = dbi.getAnswer(exId,correct);
                      System.out.println("exId"+exId);
                   }

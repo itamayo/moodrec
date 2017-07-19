@@ -26,9 +26,11 @@
 
                 document.querySelector("#ans"+i).innerHTML+=" Probability of know it:"+res.pknow;
                 if (parseFloat(res.pknow)<0.55){
-                  MoodRec.callBackend("/subject/getRecommendation/none/"+MoodRec.getExercices()[i].sv+"/none",function(err,res){
+                  document.body.innerHTML+="<p> Recomendation based of low known of "+ex.skill+"</p>";
+                  MoodRec.callBackend("/subject/getRecommendation/none/none/"+MoodRec.getExercices()[i].sv+"/none",function(err,res){
                       document.body.innerHTML+="<div>Recommended documentation:"+JSON.stringify(res.docs);
                   });
+
                 }
               }
             });

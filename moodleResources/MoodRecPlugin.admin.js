@@ -13,26 +13,26 @@
     window.MoodRec = {};
     MoodRec.backend = "http://localhost:8080";
     setTimeout(function(e){
-     var questionId = document.querySelector('.questionflagvalue').id;
-     var ids = questionId.match(/\d+/g);
-     var atemps = ids[0];
-     var id = ids[1];
+     var questionId = document.querySelector('.questionflagpostdata').value;
+     var ids = questionId.split('&')[2];
+     console.log(ids);
+     var id = ids.split('=')[1];
      var student = {};
      var studentInfo = document.querySelector('[title="View profile"]');
      var ex = {};
      student.name = studentInfo.innerHTML;
      student.id = studentInfo.href.split("=")[1];
-     console.log(student,"quiz_id",id,"atemps",atemps);
+     console.log(student,"quiz_id",id);
      MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none",function(err,res){
        if (err) {console.warn(err);}
        ex = res;
+
      });
      document.querySelector('[type=submit],[value=next]').addEventListener('click',function(){
          var res = document.querySelector('[type=radio][checked]');
          var label = document.querySelector('[for=\"'+res.id+'\"]');
-         var tmp = label.innerHTML.split(" ");
+         var tmp = label.textContent.split(" ");
          var erantzuna ="-999";
-
          if (tmp.length>1){
             erantzuna = tmp[1];
          }
@@ -44,15 +44,29 @@
          if (res.value){
            console.log('bidalitako erantzuna',erantzuna);
            console.log(ex.skill);
+           erantzuna = encodeURIComponent(erantzuna);
            MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+erantzuna+"/"+id,function(err,res){
            if (err) {console.warn("error",err);}
            else {
-
+            //MoodRec.showRecommendations("58d7e8755984581023fcb8e3")
+              if (res.pknow<0.51)
+                  MoodRec.callBackend('/subject/getRecommendation/none/'+ex.spaceVector+'/none',function(err,res){
+                  localStorage.setItem("docs",JSON.stringify(res));
+                  MoodRec.showRecommendations(res);
+              });
+              else {
+                   localStorage.setItem("docs",'{}');
+              }
+            console.log(res);
            }
          });
      }
      });
      if (student.name=="Admin User")setMoodRecQuestion(id);
+     else {
+          var docs = JSON.parse(localStorage.getItem('docs'));
+          if (docs) MoodRec.showRecommendations(docs);
+     }
      },1500);
     function setMoodRecQuestion (id){
          var panel = document.createElement('div');
@@ -85,7 +99,8 @@
           var skill = document.querySelector('#bektoreEz').value;
           var sv = document.querySelector('#bektoreaNorm').value;
           var er = document.querySelector('#erantzunZuzena').value;
-          callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill+'/'+er,function(err,result){
+          er = encodeURIComponent(er);
+          MoodRec.callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill+'/'+er,function(err,result){
             if(err) console.error("Error saving",err);
             alert("Ondo gorde da");
           });
@@ -94,7 +109,48 @@
         panel.appendChild(bidaliB);
         document.body.appendChild(panel);
     };
-    MoodRec.callBackend = function (url,cb){
+    window.MoodRec.showRecommendations = function (data){
+         var panel = document.querySelector('#recPanel');
+         if (panel){
+              var html = "";
+             panel.innerHTML ="";
+             data.docs.forEach(function(doc){
+                 html+="<p> <a href='#'>" + doc.docs.join(',')+"</a></p>";
+             });
+             panel.innerHTML += html;
+             document.body.appendChild(panel);
+         }
+        else{
+         panel = document.createElement('div');
+         panel.id ="recPanel";
+         var title = document.createElement('div');
+         title.style.height="30px";
+         title.style.background="#444";
+         title.style.color="white";
+         title.style.textAlign="center";
+         title.style.padding="5px";
+         title.innerHTML ="Recomendations";
+         panel.appendChild(title);
+         panel.style.width ="300px";
+         panel.style.position= "absolute";
+         panel.style.background="white";
+         panel.style.zIndex = "9999";
+         panel.style.top ="5%";
+         panel.style.left="80%";
+         panel.style.paddingBottom="5px";
+         panel.style.paddingLeft="5px";
+         panel.style.border="1px solid black";
+
+         var html = "";
+         data.docs.forEach(function(doc){
+             html+="<p> <a href='#'>" + doc.docs.join(',')+"</a></p>";
+         });
+         panel.innerHTML += html;
+        document.body.appendChild(panel);
+        }
+
+    };
+   window.MoodRec.callBackend = function (url,cb){
      var xmlhttp = new XMLHttpRequest();
      xmlhttp.onreadystatechange = function() {
          console.log(this.readyState,this.status);
