@@ -84,64 +84,68 @@ public class HttpServer extends RouterNanoHTTPD {
               String skill = urlParams.get("skill");
               String correct = urlParams.get("correct");
               String exId = urlParams.get("exId");
+              String token = urlParams.get("token");
+
               double pknow = 0.0;
-              if (cmd.equals("add")){
-                String _id = dbi.addSkill(id,skill);
-                text = "{\"response\":\"skill added\",\"id\":\""+_id+"\"}";
-              }
-              else if (cmd.equals("update")){
-                  Bkt bkt = new Bkt();
-                  double savedPknow = dbi.getSkillPknow(id,skill);
-                  if (!exId.equals("none")){
-                     correct = dbi.getAnswer(exId,correct);
-                     System.out.println("exId"+exId);
+              String auth = dbi.auth(id,token);
+              if (auth.equals("admin")  || auth.equals("user")){
+                  if (cmd.equals("add")){
+                    String _id = dbi.addSkill(id,skill);
+                    text = "{\"response\":\"skill added\",\"id\":\""+_id+"\"}";
                   }
-                  if (correct.equals("true")) pknow = bkt.updateMastering(true,savedPknow);
-                  else  pknow = bkt.updateMastering(false,savedPknow);
-                  text = dbi.updateSkill(id,skill,pknow);
-                  text = "{\"skill\":\""+skill+"\",\"pknow\":"+pknow+"}";
-                  System.out.println(text);
+                  else if (cmd.equals("update")){
+                      Bkt bkt = new Bkt();
+                      double savedPknow = dbi.getSkillPknow(id,skill);
+                      if (!exId.equals("none")){
+                         correct = dbi.getAnswer(exId,correct);
+                         System.out.println("exId"+exId);
+                      }
+                      if (correct.equals("true")) pknow = bkt.updateMastering(true,savedPknow);
+                      else  pknow = bkt.updateMastering(false,savedPknow);
+                      text = dbi.updateSkill(id,skill,pknow);
+                      text = "{\"skill\":\""+skill+"\",\"pknow\":"+pknow+"}";
+                      System.out.println(text);
 
 
-              }
-              else if (cmd.equals("get")){
-                System.out.println("ID"+id);
-                 if(id.compareTo("none")!=-1){
-                    text = dbi.getAllStudent();
-                    System.out.println(text);
-                 }else
-                  text = dbi.getStudent(id);
-              }
-              else if (cmd.equals("remove")){
-                  text = dbi.removeStudent(id);
-              }
-              else if (cmd.equals("getUserRecommendation")){
-                  System.out.println(skill);
-                  String[] vect1 = urlParams.get("skill").split(",");
-                /*  double[] vec1 = Arrays.stream(vect1)
-                          .mapToDouble(Double::parseDouble)
-                          .toArray();*/
-                /* Get user pknow, and create low pknown vector */
-                double[] vec1 = new double[1];
-                for (int i =0; i<vect1.length;i++){
-                  double pknown = dbi.getSkillPknow(id,vect1[i]);
-                  if (pknown<0.5){
-                    vec1 = push(vec1,pknown);
                   }
-                  else {
-                    /** remove skill whether knowns **/
-                    final List<String> list =  new ArrayList<String>();
-                    Collections.addAll(list, vect1);
-                    list.remove(vect1[i]);
-                    vect1 = list.toArray(new String[list.size()]);
+                  else if (cmd.equals("get")){
+                    System.out.println("ID"+id);
+                     if(id.compareTo("none")!=-1){
+                        text = dbi.getAllStudent();
+                        System.out.println(text);
+                     }else
+                      text = dbi.getStudent(id);
+                  }
+                  else if (cmd.equals("remove")){
+                      text = dbi.removeStudent(id);
+                  }
+                  else if (cmd.equals("getUserRecommendation")){
+                      System.out.println(skill);
+                      String[] vect1 = urlParams.get("skill").split(",");
+                    /*  double[] vec1 = Arrays.stream(vect1)
+                              .mapToDouble(Double::parseDouble)
+                              .toArray();*/
+                    /* Get user pknow, and create low pknown vector */
+                    double[] vec1 = new double[1];
+                    for (int i =0; i<vect1.length;i++){
+                      double pknown = dbi.getSkillPknow(id,vect1[i]);
+                      if (pknown<0.5){
+                        vec1 = push(vec1,pknown);
+                      }
+                      else {
+                        /** remove skill whether knowns **/
+                        final List<String> list =  new ArrayList<String>();
+                        Collections.addAll(list, vect1);
+                        list.remove(vect1[i]);
+                        vect1 = list.toArray(new String[list.size()]);
+                      }
+                    }
+                    /* Normalize vector before send */
+                     String result = dbi.getRelatedSubjectByPknows(vec1,vect1);
+                     text = result;
+
                   }
                 }
-                /* Normalize vector before send */
-                 String result = dbi.getRelatedSubjectByPknows(vec1,vect1);
-                 text = result;
-
-              }
-
                 return text;
             }
 
@@ -182,21 +186,23 @@ public class HttpServer extends RouterNanoHTTPD {
             String id = urlParams.get("id");
             String cmd = urlParams.get("cmd");
             String vector = urlParams.get("vector");
-
-            if (cmd.equals("create")){
-              String _id = dbi.addStudent(id);
-              text = "{\"response\":\"student added\",\"id\":\""+_id+"\"}";
-            }
-            else if (cmd.equals("update")){
-              //  text = dbi.getStudent(id);
-            }
-            else if (cmd.equals("get")){
-                text = dbi.getStudent(id);
-            }
-            else if (cmd.equals("remove")){
-                text = dbi.removeStudent(id);
-            }
-
+            String token = urlParams.get("token");
+            String auth = dbi.auth(id,token);
+            if (auth.equals("admin")  || auth.equals("user")){
+                if (cmd.equals("create")){
+                  String _id = dbi.addStudent(id);
+                  text = "{\"response\":\"student added\",\"id\":\""+_id+"\"}";
+                }
+                else if (cmd.equals("update")){
+                  //  text = dbi.getStudent(id);
+                }
+                else if (cmd.equals("get")){
+                    text = dbi.getStudent(id);
+                }
+                else if (cmd.equals("remove")){
+                    text = dbi.removeStudent(id);
+                }
+          }
 
             return text;
         }
@@ -241,39 +247,41 @@ public class HttpServer extends RouterNanoHTTPD {
             String vector = urlParams.get("vector");
             String doc = urlParams.get("doc");
             String skills = urlParams.get("skills");
-
-            if (cmd.equals("create")){
-              String _id = dbi.addSubject(id,skills,vector,doc);
-              text = "{\"response\":\"subject added\",\"id\":\""+_id+"\"}";
-            }
-            else if (cmd.equals("update")){
-                //text = dbi.getStudent(id);
-            }
-            else if (cmd.equals("remove")){
-                text = dbi.removeSubject(id);
-            }
-            else if (cmd.equals("get")){
-                if (id.equals("none")){
-                    // get all subjects
-                    text = dbi.getAllSubjects();
-                }else{
-                  text = dbi.getStudent(id);
+            String token = urlParams.get("token");
+            String auth = dbi.auth(id,token);
+            if (auth.equals("admin")  || auth.equals("user")){
+                if (cmd.equals("create")){
+                  String _id = dbi.addSubject(id,skills,vector,doc);
+                  text = "{\"response\":\"subject added\",\"id\":\""+_id+"\"}";
                 }
-            }
-            /* Recomendation by exercises result */
-            else if (cmd.equals("getRecommendation")){
-                System.out.println(vector);
-                String[] vect1 = urlParams.get("vector").split(",");
-                double[] vec1 = Arrays.stream(vect1)
-                        .mapToDouble(Double::parseDouble)
-                        .toArray();
+                else if (cmd.equals("update")){
+                    //text = dbi.getStudent(id);
+                }
+                else if (cmd.equals("remove")){
+                    text = dbi.removeSubject(id);
+                }
+                else if (cmd.equals("get")){
+                    if (id.equals("none")){
+                        // get all subjects
+                        text = dbi.getAllSubjects();
+                    }else{
+                      text = dbi.getStudent(id);
+                    }
+                }
+                /* Recomendation by exercises result */
+                else if (cmd.equals("getRecommendation")){
+                    System.out.println(vector);
+                    String[] vect1 = urlParams.get("vector").split(",");
+                    double[] vec1 = Arrays.stream(vect1)
+                            .mapToDouble(Double::parseDouble)
+                            .toArray();
 
-               String result = dbi.getRelatedSubject(vec1);
-               text = result;
+                   String result = dbi.getRelatedSubject(vec1);
+                   text = result;
 
-            }
+                }
 
-
+              }
 
             return text;
         }
@@ -318,10 +326,84 @@ public class HttpServer extends RouterNanoHTTPD {
             String vector = urlParams.get("vector");
             String subjects = urlParams.get("subjects");
             String answer = urlParams.get("answer");
+            String token = urlParams.get("token");
+            String auth = dbi.auth(id,token);
+            if (auth.equals("admin")  || auth.equals("user")){
+                if (cmd.equals("create")){
+                  String _id = dbi.addExerciseAttr(id,vector,subjects,answer);
+                  text = "{\"response\":\"exerciseAttr added\",\"id\":\""+_id+"\"}";
+                }
+                else if (cmd.equals("update")){
+                    //text = dbi.getStudent(id);
+                }
+                else if (cmd.equals("remove")){
+                    text = dbi.removeExercise(id);
+                }
+                else if (cmd.equals("get")){
+                   if (id.equals("none"))
+                    text = dbi.getExerciseAttr();
+                   else
+                     text = dbi.getExercicesById(id);
+                   System.out.println(text);
+                }
+                else if (cmd.equals("compare")){
+                    String[] vect1 = urlParams.get("subjects").split(",");
+                    double[] vec1 = Arrays.stream(vect1)
+                            .mapToDouble(Double::parseDouble)
+                            .toArray();
+                    double[] vec2 = Arrays.stream(vector.split(","))
+                                    .mapToDouble(Double::parseDouble)
+                                    .toArray();
+                    double result = new VectorSpaceModel().getSimilarity(vec1,vec2);
+                    System.out.println("Similarity;"+result);
+                }
+          }
+
+            return text;
+        }
+        @Override
+        public String getMimeType() {
+            return "text/html";
+        }
+
+        @Override
+        public IStatus getStatus() {
+            return Status.OK;
+        }
+
+        public Response get(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+            String text = getText(urlParams, session);
+            ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
+            int size = text.getBytes().length;
+            Response response = Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+            response.addHeader("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT");
+            response.addHeader("Access-Control-Allow-Origin",  "*");
+            response.addHeader("Access-Control-Allow-Headers", "X-Requested-With");
+            return response;
+        }
+
+    }
+    /* Security manager */
+    public static class AuthManagerHandler extends DefaultHandler {
+
+        @Override
+        public String getText() {
+            return "not implemented";
+        }
+
+        public String getText(Map<String, String> urlParams, IHTTPSession session) {
+            DBInterface dbi = new DBInterface();
+            String text = "";
+            System.out.println("ID "+urlParams.get("id"));
+            System.out.println("CMD "+urlParams.get("cmd"));
+            String id = urlParams.get("id");
+            String cmd = urlParams.get("cmd");
+            String admin = urlParams.get("admin");
+            String token = urlParams.get("token");
 
             if (cmd.equals("create")){
-              String _id = dbi.addExerciseAttr(id,vector,subjects,answer);
-              text = "{\"response\":\"exerciseAttr added\",\"id\":\""+_id+"\"}";
+              String _id = dbi.createNewToken(id,admin);
+              text = "{\"response\":\"token added\",\"id\":\""+_id+"\"}";
             }
             else if (cmd.equals("update")){
                 //text = dbi.getStudent(id);
@@ -336,17 +418,7 @@ public class HttpServer extends RouterNanoHTTPD {
                  text = dbi.getExercicesById(id);
                System.out.println(text);
             }
-            else if (cmd.equals("compare")){
-                String[] vect1 = urlParams.get("subjects").split(",");
-                double[] vec1 = Arrays.stream(vect1)
-                        .mapToDouble(Double::parseDouble)
-                        .toArray();
-                double[] vec2 = Arrays.stream(vector.split(","))
-                                .mapToDouble(Double::parseDouble)
-                                .toArray();
-                double result = new VectorSpaceModel().getSimilarity(vec1,vec2);
-                System.out.println("Similarity;"+result);
-            }
+
 
 
             return text;
@@ -373,7 +445,6 @@ public class HttpServer extends RouterNanoHTTPD {
         }
 
     }
-
     public static class StaticPageTestHandler extends StaticPageHandler {
 
         @Override
@@ -402,10 +473,11 @@ public class HttpServer extends RouterNanoHTTPD {
     @Override
     public void addMappings() {
         super.addMappings();
-        addRoute("/student/:cmd/:id", StudentHandler.class);
-        addRoute("/subject/:cmd/:id/:skills/:vector/:doc", SubjectHandler.class);
-        addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:answer", ExerciseAttributesHandler.class);
-        addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/", StudentSkillHandler.class);
+        addRoute("/student/:cmd/:id:/:token", StudentHandler.class);
+        addRoute("/subject/:cmd/:id/:skills/:vector/:doc/:token", SubjectHandler.class);
+        addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:answer/:token", ExerciseAttributesHandler.class);
+        addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/:token", StudentSkillHandler.class);
+        addRoute("/admin/:cmd/:id/:admin/:token", AuthManagerHandler.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
     }
     public static void run () {

@@ -1,10 +1,10 @@
 create user
 http://localhost:8080/student/create/itamayo
 add skill to user
-http://localhost:8080/studentSkill/add/reverse_probability/58d7e8755984581023fcb8e3/false
-http://localhost:8080/studentSkill/add/bayes_rules/58d7e8755984581023fcb8e3/false
-http://localhost:8080/studentSkill/add/conditional_probability/58d7e8755984581023fcb8e3/false
-http://localhost:8080/studentSkill/add/basic_probability/58d7e8755984581023fcb8e3/false
+http://localhost:8080/studentSkill/add/reverse_probability/58f1169079d7221e84bec99d/false
+http://localhost:8080/studentSkill/add/bayes_rules/58f1169079d7221e84bec99d/false
+http://localhost:8080/studentSkill/add/conditional_probability/58f1169079d7221e84bec99d/false
+http://localhost:8080/studentSkill/add/basic_probability/58f1169079d7221e84bec99d/false
 add exercise
 http://localhost:8080/exerciseAttr/create/none/0.8,0.1,0.1,0.1/basic_probability,conditional_probability,reverse_probability,bayes_rules
 http://localhost:8080/exerciseAttr/create/none/0.4,0.8,0.1,0.1/basic_probability,conditional_probability,reverse_probability,bayes_rules

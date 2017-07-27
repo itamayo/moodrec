@@ -13,6 +13,8 @@ import org.bson.types.ObjectId;
 import java.util.Arrays;
 import java.util.*;
 import com.mongodb.Block;
+import java.security.SecureRandom;
+import java.math.BigInteger;
 
 import com.mongodb.client.MongoCursor;
 import static com.mongodb.client.model.Filters.*;
@@ -30,7 +32,7 @@ public  class DBInterface {
   MongoCollection<Document> studentSkills;
   MongoCollection<Document> subject;
   MongoCollection<Document> exerciseAttr;
-
+  MongoCollection<Document> Security;
   public DBInterface(){
     try {
       MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
@@ -40,10 +42,55 @@ public  class DBInterface {
       subject = db.getCollection("subject");
       studentSkills = db.getCollection("StudentSkills");
       exerciseAttr = db.getCollection("exerciseAttr");
-
+      Security = db.getCollection("security");
 
     }
     catch (Exception e){}
+  }
+  /*
+    create a new user token
+
+  */
+  public String createNewToken (String id,String admin){
+    SecureRandom random = new SecureRandom();
+    Document query = new Document();
+    query.put("_id", new ObjectId(id));
+    MongoCursor<Document> cursor = Security.find(query).iterator();
+    if (cursor!=null && cursor.hasNext()) return "user all ready exists";
+    Document doc = new Document("id", id);
+    doc.put("token",new BigInteger(130, random).toString(32));
+    if (admin.equals("true")){
+        doc.put("admin",true);
+    }
+    else
+      doc.put("admin",false);
+
+    Security.insertOne(doc);
+    return doc.toJson();
+  }
+
+  /*
+    Ensure user and token; also priviliges
+
+  */
+  public String auth (String id,String token){
+    Document query = new Document();
+    query.put("_id", new ObjectId(id));
+    MongoCursor<Document> cursor = Security.find(query).iterator();
+    if (cursor!=null || !cursor.hasNext()) return "none";
+    else {
+      Document c = cursor.next();
+      String tnp = c.get("token").toString();
+      String admin = c.get("admin").toString();
+      if (tnp.equals(token)){
+         if (admin.equals("true")){
+            return "admin";
+         }
+         else return "user";
+      }
+      else return "none";
+    }
+    //return "none";
   }
 /*
   add student data
@@ -53,6 +100,7 @@ public String addStudent (String name){
   Document doc = new Document("name", name);
   doc.put("skills",Arrays.asList());
   studentSkills.insertOne(doc);
+  this.createNewToken(doc.get("_id").toString(),"false");
   return doc.get("_id").toString();
 }
 /*
