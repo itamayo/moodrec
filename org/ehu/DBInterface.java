@@ -227,16 +227,41 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
     }
   }
   ArrayList<similarities> sims = new ArrayList<similarities>();
+  ArrayList<Double> knowns_vector =new ArrayList<Double>() ;
   try {
     while (cr.hasNext()){
         Document sbj = cr.next();
         String tnp = (String)sbj.get("spaceVector");
+        String skills = (String)sbj.get("skills");
+        String []  doc_skills = skills.split(",");
+        /* check length of docs knows and user skills in other having same vector length*/
+        if (knowns.length>doc_skills.length){
+        /* get skills of doc related to pknows */
+
+          for (int i = 0; i<knowns.length;i++){
+            int ind = Arrays.asList(knowns).indexOf(doc_skills[i]);
+            if (ind!=-1){
+                knowns_vector.add(ind,new Double(vector[i]));
+            }
+            else knowns_vector.add(new Double(0.0));
+          }
+       }
+       else {
+         for (int i = 0; i<doc_skills.length;i++){
+           int ind = Arrays.asList(knowns).indexOf(doc_skills[i]);
+           if ( ind!=-1){
+               knowns_vector.add(ind,new Double(vector[i]));
+           }
+           else knowns_vector.add(new Double(0.0));
+         }
+       }
         ArrayList<String> docs = (ArrayList<String>) sbj.get("docs");
         String [] vct = tnp.split(",");
         double[] vec1 = Arrays.stream(vct)
                 .mapToDouble(Double::parseDouble)
                 .toArray();
-        double sim = vectorSpaceModel.getSimilarity(vec1,vector);
+        double[] knowns_vector1 = knowns_vector.stream().mapToDouble(Double::doubleValue).toArray();
+        double sim = vectorSpaceModel.getSimilarity(vec1,knowns_vector1);
         if (sim>0.55){
            sims.add(new similarities(sim,docs));
 
