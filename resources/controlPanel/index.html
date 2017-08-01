@@ -1,12 +1,12 @@
 <html>
 <head><title>Control Panel</title>
-  <script src="./moodrec.js"></script>
+  <script src="/browse/controlPanel/moodrec.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 <style>
 #header{
-  background-color: #449933;
+  background-color: #1fa67b;
   width:15%;
   padding:10px;
   height:100%;
@@ -103,6 +103,94 @@ button:hover {
   background-image: linear-gradient(to bottom, #3cfc59, #4ad934);
   text-decoration: none;
 }
+#login {
+    padding-top: 50px
+}
+#login .form-wrap {
+    width: 30%;
+    margin: 0 auto;
+}
+#login h1 {
+    color: #1fa67b;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 20px;
+}
+#login .form-group {
+    margin-bottom: 25px;
+}
+#login .checkbox {
+    margin-bottom: 20px;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+#login .checkbox.show:before {
+    content: '\e013';
+    color: #1fa67b;
+    font-size: 17px;
+    margin: 1px 0 0 3px;
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Glyphicons Halflings';
+}
+#login .checkbox .character-checkbox {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    display: inline-block;
+}
+#login .checkbox .label {
+    color: #6d6d6d;
+    font-size: 13px;
+    font-weight: normal;
+}
+#login .btn.btn-custom {
+    font-size: 14px;
+	margin-bottom: 20px;
+}
+#login .forget {
+    font-size: 13px;
+	text-align: center;
+	display: block;
+}
+
+/*    --------------------------------------------------
+	:: Inputs & Buttons
+	-------------------------------------------------- */
+.form-control {
+    color: #212121;
+}
+.btn-custom {
+    color: #fff;
+	background-color: #1fa67b;
+}
+.btn-custom:hover,
+.btn-custom:focus {
+    color: #fff;
+}
+
+/*    --------------------------------------------------
+    :: Footer
+	-------------------------------------------------- */
+#footer {
+    color: #6d6d6d;
+    font-size: 12px;
+    text-align: center;
+}
+#footer p {
+    margin-bottom: 0;
+}
+#footer a {
+    color: inherit;
+}
 </style>
 
 </head>
@@ -114,10 +202,13 @@ button:hover {
       <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</span></li>
   <li class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</span></li>
   <li class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderGaiak(document.querySelector('#gaiak'))> Gaiak</span></li>
+  <li class="w3-hover-blue">    <span  onclick=MoodRec.SesioaItxi()> Sesioa itxi</span></li>
+
 </ul>
   </div>
   <div id="ariketak" class="ikusezin" ></div>
   <div id="gaiak" class="ikusezin" ></div>
   <div id="ikasleak" class="ikusezin"></div>
+  <div id="login1" class="ikusezin"></div>
 </body>
 </html>

@@ -1,6 +1,18 @@
 (function(scope){
  var exercises = [];
  var debug = true;
+ var checkLogin = function (){
+  var user =localStorage.getItem("user");
+  var token = localStorage.getItem("token");
+  if (user && token && (user!='' && token!='')){
+     // not no show login
+
+  }
+  else {
+      MoodRec.renderLogin(document.querySelector('#login1'));
+  }
+ }
+
  var mapExercises = function(){
     var execs = document.querySelectorAll('[skill]');
     for (ex in execs){
@@ -42,26 +54,26 @@
  }
  var remove = function (id,type){
     if (type=="ariketa"){
-      callBackend('/exerciseAttr/remove/'+id+'/none/none',function(err,result){
+      callBackend('/exerciseAttr/remove/'+id+'/none/none/'+localStorage.getItem('token'),function(err,result){
          if (err) console.error(err);
          MoodRec.renderArikerak(document.querySelector('#ariketak'));
       })
     }
     if (type=="gaia"){
-      callBackend('/subject/remove/'+id+'/none/none/none',function(err,result){
+      callBackend('/subject/remove/'+id+'/none/none/none'+localStorage.getItem('token'),function(err,result){
          if (err) console.error(err);
          MoodRec.renderGaiak(document.querySelector('#gaiak'));
       })
     }
     if (type=="ikaslea"){
-      callBackend('/student/remove/'+id,function(err,result){
+      callBackend('/student/remove/'+id+'/'+localStorage.getItem('token'),function(err,result){
          if (err) console.error(err);
          MoodRec.renderIkasleak(document.querySelector('#ikasleak'));
       })
     }
  }
  var renderArikerak = function (el){
-    callBackend('/exerciseAttr/get/none/none/none/none/',function(err,res){
+    callBackend('/exerciseAttr/get/none/none/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting exercies");
       var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('ariketak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ariketa</span>";
        html +="<table class='table'><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th><th></th></tr>";
@@ -75,7 +87,7 @@
 
  }
  var renderIkasleak = function (el){
-    callBackend('/studentSkill/get/none/none/true/none',function(err,res){
+    callBackend('/studentSkill/get/none/none/true/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting exercies");
       var html = `<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleEzagupena')><img width=30 height=30 src="/browse/icons/add.png">Gehitu Ezagupena</span>
       <span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/addUser.png'>Gehitu Ikaslea</span>`;
@@ -94,7 +106,7 @@
 
  }
  var renderGaiak = function (el){
-    callBackend('/subject/get/none/none/none/none',function(err,res){
+    callBackend('/subject/get/none/none/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting exercies");
       var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('gaiak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Gaia</span>";
        html +="<table  class='table'><tr><th>Izena</th><th> Doc</th><th> Ezagupenak</th><th> Bektorea</th></tr>";
@@ -107,6 +119,54 @@
 
     });
 
+ }
+ var renderLogin = function (el){
+     el.className="";
+     var html = `<section id="login">
+                <div class="container">
+                	<div class="row">
+                	    <div class="col-xs-12">
+                    	    <div class="form-wrap">
+                            <h1>Erabiltzaile datuak sartu</h1>
+                                <form role="form" action="javascript:;" method="post" id="login-form" autocomplete="off">
+                                    <div class="form-group">
+                                        <label for="email" class="sr-only">Erabiltzailea</label>
+                                        <input type="email" name="email" id="erabiltzaile" class="form-control" placeholder="Erabiltzailea">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="key" class="sr-only">Token</label>
+                                        <input type="password" name="key" id="token" class="form-control" placeholder="token">
+                                    </div>
+
+                                    <input type="button" onclick="MoodRec.login()" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Sartu">
+                                </form>
+                                <a href="javascript:;" class="forget" data-toggle="modal" data-target=".forget-modal">Tokena ahaztu zaizu ?</a>
+                                <hr>
+                    	    </div>
+                		</div> <!-- /.col-xs-12 -->
+                	</div> <!-- /.row -->
+                </div> <!-- /.container -->
+            </section>`;
+      el.innerHTML = html;
+
+
+ }
+ var login = function(){
+   var user = document.querySelector('#erabiltzaile').value;
+   var token = document.querySelector('#token').value;
+   MoodRec.callBackend('/admin/login/'+user+'/false/'+token,function(err,res){
+      console.log("login",err,res);
+      if (err) {
+        alert("Ez da ondo identifikatu");
+      }
+      if (res.response && res.response=="invalid") return;
+      else {
+      localStorage.setItem("user",res.id);
+      localStorage.setItem("token",res.token);
+      document.querySelector('#login1').className="ikusezin";
+    }
+    
+   });
  }
  var callBackend = function (url,cb){
     document.querySelector('#ariketak').className="ikusezin";
@@ -126,7 +186,11 @@
      xmlhttp.open("GET", MoodRec.backend+url, true);
      xmlhttp.send();
  }
-
+sesioaItxi = function(){
+  localStorage.user="";
+  localStorage.token="";
+  document.location.reload();
+}
  var Panel = function(){
    return {
      ikasleEzagupenaTemplate:`<div class="panel" id="pIkasleak">
@@ -218,7 +282,7 @@
           var id = document.querySelector('#arId').value;
           var skill = document.querySelector('#arSkill').value;
           var sv = document.querySelector('#arSpaceVector').value;
-          callBackend('/exerciseAttr/create/'+id+'/'+sv+'/'+skill,function(err,result){
+          callBackend('/exerciseAttr/create/'+id+'/'+sv+'/'+skill+'/'+localStorage.getItem('token'),function(err,result){
             if(err) console.error("Error saving",err);
             MoodRec.Panel.hide();
             MoodRec.renderArikerak(document.querySelector('#ariketak'));
@@ -230,7 +294,7 @@
           var sv = document.querySelector('#gSpaceVector').value;
           var gs = document.querySelector('#gSkills').value;
 
-          callBackend('/subject/create/'+izena+'/'+gs+'/'+sv+'/'+doc,function(err,result){
+          callBackend('/subject/create/'+izena+'/'+gs+'/'+sv+'/'+doc+'/'+localStorage.getItem('token'),function(err,result){
             if(err) console.error("Error saving",err);
             MoodRec.Panel.hide();
             MoodRec.renderGaiak(document.querySelector('#gaiak'));
@@ -239,7 +303,7 @@
         else if(type=="ikasleEzagupena"){
           var skill = document.querySelector('#ikSkill').value;
           var izena = document.querySelector('#ikIzena').value;
-          callBackend('/studentSkill/add/'+skill+'/'+izena+'/none',function(err,result){
+          callBackend('/studentSkill/add/'+skill+'/'+izena+'/none'+'/'+localStorage.getItem('token'),function(err,result){
             if(err) console.error("Error saving",err);
             MoodRec.Panel.hide();
             MoodRec.renderIkasleak(document.querySelector('#ikasleak'));
@@ -271,10 +335,15 @@
       "renderArikerak":renderArikerak,
       "renderIkasleak":renderIkasleak,
       "renderGaiak":renderGaiak,
+      "renderLogin":renderLogin,
+      "checkLogin":checkLogin,
+      "login":login,
+      "SesioaItxi":sesioaItxi,
       "Panel": new Panel(),
       "remove":remove,
-      "backend":"http://localhost:8080"
+      "backend":"http://localhost:8888"
   }
   //document.addEventListener('DOMContentLoaded',mapExercises.bind(this));
   scope.MoodRec = API;
+  document.addEventListener('DOMContentLoaded',checkLogin);
 })(window);

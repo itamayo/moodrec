@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.*;
+import java.util.Properties;
 
 import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.response.IStatus;
@@ -66,6 +67,10 @@ public class HttpServer extends RouterNanoHTTPD {
 
         private static final int PORT = 8080;
         private DBInterface dbi = new DBInterface();
+        private static Properties config;
+        public static void setProperties(Properties prop){
+           config = prop;
+        }
         public static class StudentSkillHandler extends DefaultHandler {
 
             @Override
@@ -87,7 +92,7 @@ public class HttpServer extends RouterNanoHTTPD {
               String token = urlParams.get("token");
 
               double pknow = 0.0;
-              String auth = dbi.auth(id,token);
+              String auth = dbi.authByToken(token);
               if (auth.equals("admin")  || auth.equals("user")){
                   if (cmd.equals("add")){
                     String _id = dbi.addSkill(id,skill);
@@ -110,7 +115,7 @@ public class HttpServer extends RouterNanoHTTPD {
                   }
                   else if (cmd.equals("get")){
                     System.out.println("ID"+id);
-                     if(id.compareTo("none")!=-1){
+                     if(id.equals("none")){
                         text = dbi.getAllStudent();
                         System.out.println(text);
                      }else
@@ -187,7 +192,7 @@ public class HttpServer extends RouterNanoHTTPD {
             String cmd = urlParams.get("cmd");
             String vector = urlParams.get("vector");
             String token = urlParams.get("token");
-            String auth = dbi.auth(id,token);
+            String auth = dbi.authByToken(token);
             if (auth.equals("admin")  || auth.equals("user")){
                 if (cmd.equals("create")){
                   String _id = dbi.addStudent(id);
@@ -248,7 +253,7 @@ public class HttpServer extends RouterNanoHTTPD {
             String doc = urlParams.get("doc");
             String skills = urlParams.get("skills");
             String token = urlParams.get("token");
-            String auth = dbi.auth(id,token);
+            String auth = dbi.authByToken(token);
             if (auth.equals("admin")  || auth.equals("user")){
                 if (cmd.equals("create")){
                   String _id = dbi.addSubject(id,skills,vector,doc);
@@ -327,7 +332,7 @@ public class HttpServer extends RouterNanoHTTPD {
             String subjects = urlParams.get("subjects");
             String answer = urlParams.get("answer");
             String token = urlParams.get("token");
-            String auth = dbi.auth(id,token);
+            String auth = dbi.authByToken(token);
             if (auth.equals("admin")  || auth.equals("user")){
                 if (cmd.equals("create")){
                   String _id = dbi.addExerciseAttr(id,vector,subjects,answer);
@@ -411,6 +416,23 @@ public class HttpServer extends RouterNanoHTTPD {
             else if (cmd.equals("remove")){
                 text = dbi.removeExercise(id);
             }
+            else if (cmd.equals("login")){
+                System.out.println(id);
+                System.out.println(token);
+                String auth = dbi.auth(id,token);
+                System.out.println(auth);
+                if (auth.equals("admin")  || auth.equals("user")){
+                    if (auth.equals("admin")){
+                      text ="{\"admin\":true,\"id\":\""+id+"\",\"token\":\""+token+"\"}";
+                    }
+                    else {
+                      text ="{\"admin\":false,\"id\":\""+id+"\",\"token\":\""+token+"\"}";
+                    }
+                }
+                else {
+                    text = "{\"response\":\"invalid\",\"id\":\""+id+"\"}";
+                }
+            }
             else if (cmd.equals("get")){
                if (id.equals("none"))
                 text = dbi.getExerciseAttr();
@@ -460,9 +482,9 @@ public class HttpServer extends RouterNanoHTTPD {
      * Create the server instance
      */
     public HttpServer() throws IOException {
-        super(PORT);
+        super(Integer.parseInt(config.getProperty("port")));
         addMappings();
-        System.out.println("\nRunning! Point your browers to http://localhost:" + PORT + "/ \n");
+        System.out.println("\nRunning! Point your browers to http://localhost:" + config.getProperty("port") + "/ \n");
     }
 
     /**

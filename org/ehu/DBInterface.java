@@ -77,7 +77,37 @@ public  class DBInterface {
     Document query = new Document();
     query.put("_id", new ObjectId(id));
     MongoCursor<Document> cursor = Security.find(query).iterator();
-    if (cursor!=null || !cursor.hasNext()) return "none";
+    if (cursor==null || !cursor.hasNext()) {
+      System.out.println("here fails !");
+      System.out.println(cursor.hasNext());
+      return "none";
+    }
+    else {
+      Document c = cursor.next();
+      String tnp = c.get("token").toString();
+      String admin = c.get("admin").toString();
+      if (tnp.equals(token)){
+         if (admin.equals("true")){
+            return "admin";
+         }
+         else return "user";
+      }
+      else return "none";
+    }
+    //return "none";
+  }
+  /*
+    Ensure user and token; also priviliges
+
+  */
+  public String authByToken (String token){
+    Document query = new Document();
+    query.put("token", token);
+    MongoCursor<Document> cursor = Security.find(query).iterator();
+    if (cursor==null || !cursor.hasNext()) {
+      System.out.println("here fails !");
+      return "none";
+    }
     else {
       Document c = cursor.next();
       String tnp = c.get("token").toString();
