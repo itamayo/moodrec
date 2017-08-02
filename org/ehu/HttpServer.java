@@ -92,7 +92,8 @@ public class HttpServer extends RouterNanoHTTPD {
               String token = urlParams.get("token");
 
               double pknow = 0.0;
-              String auth = dbi.authByToken(token);
+              System.out.println(token);
+              String auth = dbi.auth(id,token);
               if (auth.equals("admin")  || auth.equals("user")){
                   if (cmd.equals("add")){
                     String _id = dbi.addSkill(id,skill);
@@ -125,11 +126,9 @@ public class HttpServer extends RouterNanoHTTPD {
                       text = dbi.removeStudent(id);
                   }
                   else if (cmd.equals("getUserRecommendation")){
-                      System.out.println(skill);
-                      String[] vect1 = urlParams.get("skill").split(",");
-                    /*  double[] vec1 = Arrays.stream(vect1)
-                              .mapToDouble(Double::parseDouble)
-                              .toArray();*/
+
+                      String[] vect1 = dbi.getStudentSkills(id);
+                      System.out.println("student SKILLS "+vect1[0]+vect1[1]);
                     /* Get user pknow, and create low pknown vector */
                     double[] vec1 = new double[1];
                     for (int i =0; i<vect1.length;i++){
@@ -146,6 +145,7 @@ public class HttpServer extends RouterNanoHTTPD {
                       }
                     }
                     /* Normalize vector before send */
+
                      String result = dbi.getRelatedSubjectByPknows(vec1,vect1);
                      text = result;
 

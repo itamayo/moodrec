@@ -75,7 +75,7 @@ public  class DBInterface {
   */
   public String auth (String id,String token){
     Document query = new Document();
-    query.put("_id", new ObjectId(id));
+    query.put("id", id);
     MongoCursor<Document> cursor = Security.find(query).iterator();
     if (cursor==null || !cursor.hasNext()) {
       System.out.println("here fails !");
@@ -228,6 +228,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
   }
   ArrayList<similarities> sims = new ArrayList<similarities>();
   ArrayList<Double> knowns_vector =new ArrayList<Double>() ;
+
   try {
     while (cr.hasNext()){
         Document sbj = cr.next();
@@ -236,10 +237,14 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
         String []  doc_skills = skills.split(",");
         /* check length of docs knows and user skills in other having same vector length*/
         if (knowns.length>doc_skills.length){
+          /* Init ouput vector to need dimension */
+          for (int i=0;i<knowns.length;i++){
+            knowns_vector.add(i,new Double(0.0));
+          }
         /* get skills of doc related to pknows */
-
+          System.out.println("knows larger");
           for (int i = 0; i<knowns.length;i++){
-            int ind = Arrays.asList(knowns).indexOf(doc_skills[i]);
+            int ind = Arrays.asList(doc_skills).indexOf(knowns[i]);
             if (ind!=-1){
                 knowns_vector.add(ind,new Double(vector[i]));
             }
@@ -247,10 +252,14 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
           }
        }
        else {
+         /* Init ouput vector to need dimension */
+         for (int j=0;j<doc_skills.length;j++){
+           knowns_vector.add(j,new Double(0.0));
+         }
          for (int i = 0; i<doc_skills.length;i++){
            int ind = Arrays.asList(knowns).indexOf(doc_skills[i]);
            if ( ind!=-1){
-               knowns_vector.add(ind,new Double(vector[i]));
+               knowns_vector.add(i,new Double(vector[i]));
            }
            else knowns_vector.add(new Double(0.0));
          }
@@ -261,7 +270,9 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
                 .mapToDouble(Double::parseDouble)
                 .toArray();
         double[] knowns_vector1 = knowns_vector.stream().mapToDouble(Double::doubleValue).toArray();
+
         double sim = vectorSpaceModel.getSimilarity(vec1,knowns_vector1);
+        System.out.println(sim);
         if (sim>0.55){
            sims.add(new similarities(sim,docs));
 
@@ -415,6 +426,55 @@ public String getAnswer (String exId,String correct){
   }
   return ans;
 }
+
+/*
+  get student skills
+*/
+
+public String[] getStudentSkills (String stdId){
+  String[] sks = new String[100];
+  Iterator<Document> cr;
+  Document query = new Document();
+  query = new Document("_id", new ObjectId(stdId));
+   MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+      Document c = cursor.next();
+      List<Document> skills = (List<Document>)c.get("skills");
+      cr = skills.iterator();
+
+      try {
+        int i =0 ;
+        while (cr.hasNext()){
+            Document sk = cr.next();
+            String name = (String)sk.get("name");
+            sks[i] = name;
+            System.out.println("getting skill");
+            System.out.println(name);
+            i++;
+        }
+    //    System.out.println(c.toJson(),skills);
+
+
+    }
+     finally {
+        cursor.close();
+     }
+   }
+   // SKill is new for student
+   else{
+     /*System.out.println("Adding no existing skill for user, with default values");
+     this.addSkill(stdId,skill);
+     return 0.3;*/
+
+   }
+  } finally {
+     cursor.close();
+  }
+  return sks;
+}
+
 /*
   get saved pknow of student skill
 */
@@ -436,7 +496,7 @@ public double getSkillPknow (String stdId,String skill){
             Document sk = cr.next();
             String name = (String)sk.get("name");
             System.out.println(name);
-            if (name.equals(skill)){
+            if (name!=null && name.equals(skill)){
                 pknow = (double)sk.get("pknown");
                 System.out.println(pknow);
             }
