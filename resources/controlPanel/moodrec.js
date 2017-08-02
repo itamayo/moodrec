@@ -4,11 +4,50 @@
  var checkLogin = function (){
   var user =localStorage.getItem("user");
   var token = localStorage.getItem("token");
+  var admin = localStorage.getItem("admin");
   if (user && token && (user!='' && token!='')){
-     // not no show login
-
+        if(admin){
+          var els = document.querySelectorAll('[role=two]');
+          for(el in els){
+            els[el].className="ikusezin";
+          }
+          var els = document.querySelectorAll('[role=one]');
+          for(el in els){
+            els[el].className="";
+          }
+          var els = document.querySelectorAll('[role=session]');
+          for(el in els){
+            els[el].className="";
+          }
+        }
+        else {
+          var els = document.querySelectorAll('[role=two]');
+          for(el in els){
+            els[el].className="";
+          }
+          var els = document.querySelectorAll('[role=one]');
+          for(el in els){
+            els[el].className="ikusezin";
+          }
+          var els = document.querySelectorAll('[role=session]');
+          for(el in els){
+            els[el].className="";
+          }
+        }
   }
   else {
+    var els = document.querySelectorAll('[role=one]');
+    for(el in els){
+      els[el].className="ikusezin";
+    }
+    var els = document.querySelectorAll('[role=two]');
+    for(el in els){
+      els[el].className="ikusezin";
+    }
+    var els = document.querySelectorAll('[role=session]');
+    for(el in els){
+      els[el].className="ikusezin";
+    }
       MoodRec.renderLogin(document.querySelector('#login1'));
   }
  }
@@ -120,6 +159,21 @@
     });
 
  }
+ var renderGomendioak = function (el){
+    callBackend('/studentSkill/getUserRecommendation/none/'+localStorage.getItem('user')+'/none/noene/'+localStorage.getItem('token'),function(err,res){
+      if (err) console.error("Error getting Recomendations");
+      var html = "";
+       html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
+       res.docs.forEach(function(rc){
+          html+="<tr><td>"+rc.docs[0]+"</td><td>"+rc.sim+"</td></tr>";
+       })
+       html+="</table>";
+       el.innerHTML = html;
+       el.className="";
+
+    });
+
+ }
  var renderLogin = function (el){
      el.className="";
      var html = `<section id="login">
@@ -161,11 +215,41 @@
       }
       if (res.response && res.response=="invalid") return;
       else {
+      console.log("admin",res.admin);
+      if (res.admin){
+        var els = document.querySelectorAll('[role=two]');
+        for(el in els){
+          els[el].className="ikusezin";
+        }
+        var els = document.querySelectorAll('[role=one]');
+        for(el in els){
+          els[el].className="";
+        }
+        var els = document.querySelectorAll('[role=session]');
+        for(el in els){
+          els[el].className="";
+        }
+      }
+      else {
+        var els = document.querySelectorAll('[role=one]');
+        for(el in els){
+          els[el].className="ikusezin";
+        }
+        var els = document.querySelectorAll('[role=two]');
+        for(el in els){
+          els[el].className="";
+        }
+        var els = document.querySelectorAll('[role=session]');
+        for(el in els){
+          els[el].className="";
+        }
+      }
       localStorage.setItem("user",res.id);
       localStorage.setItem("token",res.token);
+      localStorage.setItem("admin",res.admin);
       document.querySelector('#login1').className="ikusezin";
     }
-    
+
    });
  }
  var callBackend = function (url,cb){
@@ -336,6 +420,7 @@ sesioaItxi = function(){
       "renderIkasleak":renderIkasleak,
       "renderGaiak":renderGaiak,
       "renderLogin":renderLogin,
+      "renderGomendioak":renderGomendioak,
       "checkLogin":checkLogin,
       "login":login,
       "SesioaItxi":sesioaItxi,

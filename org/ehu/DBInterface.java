@@ -273,7 +273,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
 
         double sim = vectorSpaceModel.getSimilarity(vec1,knowns_vector1);
         System.out.println(sim);
-        if (sim>0.55){
+        if (sim>0.35){
            sims.add(new similarities(sim,docs));
 
         }

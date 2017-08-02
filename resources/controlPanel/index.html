@@ -34,7 +34,7 @@ th{
   background: white;
   padding:10px;
 }
-#ariketak,#gaiak,#ikasleak{
+#ariketak,#gaiak,#ikasleak,#gomendioak{
   width:80%;
   padding-left:30%;
   padding-top: 5%;
@@ -199,10 +199,11 @@ button:hover {
     <p id="title"> MoodRec</p>
     <ul class="w3-ul">
     <li class="w3-hover-blue">
-      <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</span></li>
-  <li class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</span></li>
-  <li class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderGaiak(document.querySelector('#gaiak'))> Gaiak</span></li>
-  <li class="w3-hover-blue">    <span  onclick=MoodRec.SesioaItxi()> Sesioa itxi</span></li>
+  <span role="one" onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderArikerak(document.querySelector('#ariketak'))> Ariketak</span></li>
+  <li role="one" class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderIkasleak(document.querySelector('#ikasleak'))> Ikasleak</span></li>
+  <li role="one" class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderGaiak(document.querySelector('#gaiak'))> Gaiak</span></li>
+  <li role="two" class="w3-hover-blue">    <span  onclick=MoodRec.Panel.selectMenu(this);MoodRec.renderGomendioak(document.querySelector('#gomendioak'))> Gomendioak</span></li>
+  <li role="session" class="w3-hover-blue">    <span  onclick=MoodRec.SesioaItxi()> Sesioa itxi</span></li>
 
 </ul>
   </div>
@@ -210,5 +211,6 @@ button:hover {
   <div id="gaiak" class="ikusezin" ></div>
   <div id="ikasleak" class="ikusezin"></div>
   <div id="login1" class="ikusezin"></div>
+  <div id="gomendioak" class="ikusezin"></div>
 </body>
 </html>

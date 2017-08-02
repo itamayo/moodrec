@@ -93,7 +93,7 @@ public class HttpServer extends RouterNanoHTTPD {
 
               double pknow = 0.0;
               System.out.println(token);
-              String auth = dbi.auth(id,token);
+              String auth = dbi.authByToken(token);
               if (auth.equals("admin")  || auth.equals("user")){
                   if (cmd.equals("add")){
                     String _id = dbi.addSkill(id,skill);
