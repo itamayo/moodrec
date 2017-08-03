@@ -331,11 +331,14 @@ public class HttpServer extends RouterNanoHTTPD {
             String vector = urlParams.get("vector");
             String subjects = urlParams.get("subjects");
             String answer = urlParams.get("answer");
+            String answers = urlParams.get("answers");
+            String question = urlParams.get("question");
+            String group = urlParams.get("group");
             String token = urlParams.get("token");
             String auth = dbi.authByToken(token);
             if (auth.equals("admin")  || auth.equals("user")){
                 if (cmd.equals("create")){
-                  String _id = dbi.addExerciseAttr(id,vector,subjects,answer);
+                  String _id = dbi.addExerciseAttr(id,vector,subjects,answer,question,answers,group);
                   text = "{\"response\":\"exerciseAttr added\",\"id\":\""+_id+"\"}";
                 }
                 else if (cmd.equals("update")){
@@ -497,7 +500,7 @@ public class HttpServer extends RouterNanoHTTPD {
         super.addMappings();
         addRoute("/student/:cmd/:id:/:token", StudentHandler.class);
         addRoute("/subject/:cmd/:id/:skills/:vector/:doc/:token", SubjectHandler.class);
-        addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:answer/:token", ExerciseAttributesHandler.class);
+        addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:question/:answers/:answer/:group/:token", ExerciseAttributesHandler.class);
         addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/:token", StudentSkillHandler.class);
         addRoute("/admin/:cmd/:id/:admin/:token", AuthManagerHandler.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());

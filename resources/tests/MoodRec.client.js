@@ -1,26 +1,44 @@
 (function(scope){
  var exercises = [];
  var debug = true;
- var mapExercises = function(){
-    var execs = document.querySelectorAll('[skill]');
-    for (ex in execs){
-      if (execs[ex].nodeName){
-       var item = {"skill":execs[ex].getAttribute('skill'),"elem":execs[ex],"sv":execs[ex].getAttribute('sv')};
-       exercises.push(item);
-     }
-    }
-    document.querySelector('[action=save]').addEventListener('click',getResults)
+ var getTest = function(){
+   MoodRec.callBackend('/exerciseAttr/get/none/none/none/none/none/none/none/tri70f9g8trtegq8rif7bth93n',function(err,res){
+       console.log(res);
+       var exs = res.result;
+       exs.forEach(function(e){
+          if (e.group =="Ariketak1"){
+             var h2 = document.createElement('h2');
+             h2.innerHTML = e.question;
+             var sel = document.createElement('select');
+             var opts = e.answers.split(',');
+             opts.forEach(function(o){
+                var opt = document.createElement('option');
+                opt.value = o;
+                opt.innerHTML = o;
+                opt.setAttribute("exId",e.id);
+                opt.setAttribute("skills",e.subjects);
+                sel.appendChild(opt);
+             });
+             document.querySelector('div').appendChild(h2);
+             document.querySelector('div').appendChild(sel);
+             exercises.push(sel);
+          }
+
+       });
+   });
  }
  var getResults = function (ev){
     exercises.forEach(function(ex){
-        ex.correctAnswer = ex.elem.selectedOptions[0].getAttribute("correct");
+        ex.id = ex.selectedOptions[0].getAttribute("exId");
+        ex.skill = ex.selectedOptions[0].getAttribute("skills");
+        ex.ans = ex.value;
     });
     if (debug) {
         var div = document.createElement('div');
         exercises.forEach(function(ex,i){
             div.innerHTML+="<h2 id='ans"+i+"'>Ariketa "+i +" skill: " +ex.skill +" Hit: " +ex.correctAnswer + " </h2>";
             (function(i){
-              MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+ex.correctAnswer+"/none",function(err,res){
+              MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/597a1e78564430786468c875/"+ex.ans+"/"+ex.id+"/tri70f9g8trtegq8rif7bth93n",function(err,res){
               if (err) {console.warn(err);}
               else {
 
@@ -59,8 +77,9 @@
   var API = {
       "getExercices":getExercices,
       "callBackend":callBackend,
-      "backend":"http://localhost:8080"
+      "getResults":getResults,
+      "backend":"http://localhost:8888"
   }
-  document.addEventListener('DOMContentLoaded',mapExercises.bind(this));
+  document.addEventListener('DOMContentLoaded',getTest.bind(this));
   scope.MoodRec = API;
 })(window);

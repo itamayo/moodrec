@@ -410,7 +410,7 @@ public String getAnswer (String exId,String correct){
     if (cursor.hasNext()){
       Document c = cursor.next();
        ans = (String)c.get("response");
-       System.out.println("ans"+ans+correct);
+       System.out.println("ans "+ans+correct);
       if (ans.equals(correct)){
          ans = "true";
       }
@@ -588,12 +588,15 @@ public String getAllSubjects (){
 /*
   add exerciseAttr
 */
-public String addExerciseAttr (String id,String vector,String subjects,String response){
+public String addExerciseAttr (String id,String vector,String subjects,String response,String question,String answers,String group){
   Document subj = new Document();
   subj.put("subjects",Arrays.asList(subjects));
   subj.put("id",id);
   subj.put("spaceVector",vector);
   subj.put("response",response);
+  subj.put("question",question);
+  subj.put("answers",answers);
+  subj.put("group",group);
   exerciseAttr.insertOne(subj);
   return subj.get("_id").toString();
 }

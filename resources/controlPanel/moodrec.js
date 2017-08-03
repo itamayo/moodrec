@@ -112,7 +112,7 @@
     }
  }
  var renderArikerak = function (el){
-    callBackend('/exerciseAttr/get/none/none/none/none/'+localStorage.getItem('token'),function(err,res){
+    callBackend('/exerciseAttr/get/none/none/none/none/none/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting exercies");
       var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('ariketak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ariketa</span>";
        html +="<table class='table'><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th><th></th></tr>";
@@ -323,12 +323,28 @@ sesioaItxi = function(){
                         <input id="arId" value="">
                        </fieldset>
                        <fieldset>
+                       <legend> Galdera</legend>
+                        <input id="question" value="" placeholder="Zein da ... ?" size="60">
+                       </fieldset>
+                       <fieldset>
+                       <legend> Erantzu posibleak</legend>
+                        <input id="answers" value="" placeholder="1.4,0.3,2.4" size="60">
+                       </fieldset>
+                       <fieldset>
+                       <legend> Erantzu zuzena</legend>
+                        <input id="answer" value="" placeholder="1.4">
+                       </fieldset>
+                       <fieldset>
+                       <legend> Taldea</legend>
+                        <input id="group" value="" placeholder="Ariketak1">
+                       </fieldset>
+                       <fieldset>
                        <legend> Ezagupenak</legend>
-                        <input id="arSkill" value="" placeholder="biderkaketa,zatiketa,gehiketa">
+                        <input id="arSkill" value="" placeholder="biderkaketa,zatiketa,gehiketa" size="60">
                        </fieldset>
                         <fieldset>
                        <legend> Ezagupen Bektorea</legend>
-                        <input id="arSpaceVector" value="" placeholder="0.1,0.5,0.4">
+                        <input id="arSpaceVector" value="" placeholder="0.1,0.5,0.4" size="60">
                        </fieldset>
                        <button onclick="MoodRec.Panel.save('ariketa')"> Gorde</button>
                        </div>`,
@@ -391,7 +407,12 @@ sesioaItxi = function(){
           var id = document.querySelector('#arId').value;
           var skill = document.querySelector('#arSkill').value;
           var sv = document.querySelector('#arSpaceVector').value;
-          callBackend('/exerciseAttr/create/'+id+'/'+sv+'/'+skill+'/'+localStorage.getItem('token'),function(err,result){
+          var question = document.querySelector('#question').value;
+          question = question.replace(/\?/g,"");
+          var answer = document.querySelector('#answer').value;
+          var answers = document.querySelector('#answers').value;
+          var group = document.querySelector('#group').value;
+          callBackend('/exerciseAttr/create/'+id || 'none'+'/'+sv+'/'+skill+'/'+question+'/'+answers+'/'+answer+'/'+group+'/'+localStorage.getItem('token'),function(err,result){
             if(err) console.error("Error saving",err);
             MoodRec.Panel.hide();
             MoodRec.renderArikerak(document.querySelector('#ariketak'));
