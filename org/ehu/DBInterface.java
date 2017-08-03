@@ -297,6 +297,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
  }
  result = result.substring(0,result.length()-1);
  result+="]}";
+ if (sims.size() ==0) return "{\"docs\":[]}";
   return result;
 }
 /*

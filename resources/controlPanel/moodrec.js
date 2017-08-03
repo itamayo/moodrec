@@ -136,7 +136,9 @@
           ik.skills.forEach(function(sk){
             html+="<p>"+sk.name+" pknown:"+sk.pknown+"</p>";
           })
-          html+="</td><td onclick=MoodRec.remove('"+ik._id.$oid+"','ikaslea')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr></tr>";
+          html+="</td><td onclick=MoodRec.remove('"+ik._id.$oid+"','ikaslea')><img width='30' height='30' src='/browse/icons/remove.png'></td>";
+          html+="</td><td onclick=MoodRec.Panel.show('gm');MoodRec.showUserRecommendation('"+ik._id.$oid+"','gm')><img width='30' height='30' src='/browse/icons/recommendation.png'></td>";
+
        })
        html+="</table>";
        el.innerHTML = html;
@@ -170,6 +172,22 @@
        html+="</table>";
        el.innerHTML = html;
        el.className="";
+
+    });
+
+ }
+ var showUserRecommendation = function (id,el){
+    var el = document.querySelector('#'+el);
+    callBackend('/studentSkill/getUserRecommendation/none/'+id+'/none/noene/'+localStorage.getItem('token'),function(err,res){
+      if (err) console.error("Error getting Recomendations");
+      var html = "<span style='position:relative;top:0px;left:90%;color:green;' onclick='MoodRec.Panel.hide()'> X </span>";
+       html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
+       res.docs.forEach(function(rc){
+          html+="<tr><td>"+rc.docs[0]+"</td><td>"+rc.sim+"</td></tr>";
+       })
+       html+="</table>";
+       el.innerHTML = html;
+       el.className = el.className.replace("ikusezin","");
 
     });
 
@@ -254,7 +272,7 @@
  }
  var callBackend = function (url,cb){
     document.querySelector('#ariketak').className="ikusezin";
-    document.querySelector('#ikasleak').className="ikusezin";
+    if(url.indexOf('studentSkill')==-1)document.querySelector('#ikasleak').className="ikusezin";
     document.querySelector('#gaiak').className="ikusezin";
 
      var xmlhttp = new XMLHttpRequest();
@@ -335,6 +353,8 @@ sesioaItxi = function(){
                        </fieldset>
                        <button onclick="MoodRec.Panel.save('gaia')"> Gehitu</button>
                        </div>`,
+       gmTemplate:`<div class="panel" id="gm">
+                         </div>`,
       show:function(id){
           if (id=="ikasleak"){
              var x = document.querySelector('.panel');
@@ -355,6 +375,11 @@ sesioaItxi = function(){
              var x = document.querySelector('.panel');
              if (x) document.body.removeChild(x);
              document.body.innerHTML += this.ariketakTemplate;
+          }
+          if (id=="gm"){
+             var x = document.querySelector('.panel');
+             if (x) document.body.removeChild(x);
+             document.body.innerHTML += this.gmTemplate;
           }
       },
       hide:function(id){
@@ -421,6 +446,7 @@ sesioaItxi = function(){
       "renderGaiak":renderGaiak,
       "renderLogin":renderLogin,
       "renderGomendioak":renderGomendioak,
+      "showUserRecommendation":showUserRecommendation,
       "checkLogin":checkLogin,
       "login":login,
       "SesioaItxi":sesioaItxi,
