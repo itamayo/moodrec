@@ -89,18 +89,24 @@ public class HttpServer extends RouterNanoHTTPD {
               String skill = urlParams.get("skill");
               String correct = urlParams.get("correct");
               String exId = urlParams.get("exId");
+              String bktP = urlParams.get("bktParams");
               String token = urlParams.get("token");
 
               double pknow = 0.0;
-              System.out.println(token);
               String auth = dbi.authByToken(token);
               if (auth.equals("admin")  || auth.equals("user")){
                   if (cmd.equals("add")){
-                    String _id = dbi.addSkill(id,skill);
+                    String _id = dbi.addSkill(id,skill,bktP);
                     text = "{\"response\":\"skill added\",\"id\":\""+_id+"\"}";
                   }
                   else if (cmd.equals("update")){
                       Bkt bkt = new Bkt();
+                      /* check whether bkt parameters are setted by skill */
+                      String params = dbi.getSkillBktParams(id,skill);
+                      if (!params.equals("")){
+                        String [] p = params.split(",");
+                        bkt.setParameters(Double.parseDouble(p[0]),Double.parseDouble(p[1]),Double.parseDouble(p[2]),Double.parseDouble(p[3]));
+                      }
                       double savedPknow = dbi.getSkillPknow(id,skill);
                       if (!exId.equals("none")){
                          correct = dbi.getAnswer(exId,correct);
@@ -501,7 +507,7 @@ public class HttpServer extends RouterNanoHTTPD {
         addRoute("/student/:cmd/:id:/:token", StudentHandler.class);
         addRoute("/subject/:cmd/:id/:skills/:vector/:doc/:token", SubjectHandler.class);
         addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:question/:answers/:answer/:group/:token", ExerciseAttributesHandler.class);
-        addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/:token", StudentSkillHandler.class);
+        addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/:btkParams/:token", StudentSkillHandler.class);
         addRoute("/admin/:cmd/:id/:admin/:token", AuthManagerHandler.class);
         addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
     }

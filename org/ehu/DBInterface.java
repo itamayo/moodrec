@@ -359,7 +359,7 @@ public String getRelatedSubject (double [] vector){
 /* add
    Student skill known
 */
-public String addSkill (String studentid,String skill){
+public String addSkill (String studentid,String skill,String params){
   System.out.println("adding skill "+skill+ " student "+studentid);
   String tnp = new String("");
   Document query = new Document();
@@ -379,6 +379,9 @@ public String addSkill (String studentid,String skill){
      _skill.append("pknown",0.3);
      _skill.append("subject","math");
      _skill.append("answer",Arrays.asList());
+     if (!params.equals("none")){
+         _skill.append("bktParams",params);
+     }
      // Insert to student skills
      Document std = new Document();
      std.append("_id",new ObjectId(studentid));
@@ -428,6 +431,51 @@ public String getAnswer (String exId,String correct){
   return ans;
 }
 
+/*
+  get skill bkt parameters
+*/
+
+public String getSkillBktParams (String stdId, String skill){
+  String p = new String("");
+  Iterator<Document> cr;
+  Document query = new Document();
+  query = new Document("_id", new ObjectId(stdId));
+   MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+      Document c = cursor.next();
+      List<Document> skills = (List<Document>)c.get("skills");
+      cr = skills.iterator();
+
+      try {
+        int i =0 ;
+        while (cr.hasNext()){
+            Document sk = cr.next();
+            String name = (String)sk.get("name");
+            if (name.equals(skill)){
+              p = (String)sk.get("bktParams");
+            }
+
+        }
+    //    System.out.println(c.toJson(),skills);
+
+
+    }
+     finally {
+        cursor.close();
+     }
+   }
+   // SKill is new for student
+   else{
+     return "";
+
+   }
+  } finally {
+     cursor.close();
+  }
+  return p;
+}
 /*
   get student skills
 */
@@ -513,7 +561,7 @@ public double getSkillPknow (String stdId,String skill){
    // SKill is new for student
    else{
      System.out.println("Adding no existing skill for user, with default values");
-     this.addSkill(stdId,skill);
+     this.addSkill(stdId,skill,"none");
      return 0.3;
 
    }
