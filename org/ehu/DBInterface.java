@@ -235,8 +235,9 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
         String tnp = (String)sbj.get("spaceVector");
         String skills = (String)sbj.get("skills");
         String []  doc_skills = skills.split(",");
+        System.out.println("doc_skills"+doc_skills[0]);
         /* check length of docs knows and user skills in other having same vector length*/
-        if (knowns.length>doc_skills.length){
+        if (knowns.length>=doc_skills.length){
           /* Init ouput vector to need dimension */
           for (int i=0;i<knowns.length;i++){
             knowns_vector.add(i,new Double(0.0));
@@ -244,12 +245,16 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
         /* get skills of doc related to pknows */
           System.out.println("knows larger");
           for (int i = 0; i<knowns.length;i++){
-            int ind = Arrays.asList(doc_skills).indexOf(knowns[i]);
-            if (ind!=-1){
-                knowns_vector.add(ind,new Double(vector[i]));
-            }
-            else knowns_vector.add(new Double(0.0));
+            if (knowns[i]!=null){
+                System.out.println("knows checking "+knowns[i]+" "+doc_skills[0]);
+                int ind = Arrays.asList(doc_skills).indexOf(knowns[i]);
+                if (ind!=-1){
+                    System.out.println("barruan "+ind+" "+vector[i]);
+                    knowns_vector.add(ind,new Double(vector[i]));
+                }
+                else knowns_vector.add(new Double(0.0));
           }
+        }
        }
        else {
          /* Init ouput vector to need dimension */
@@ -474,6 +479,7 @@ public String getSkillBktParams (String stdId, String skill){
   } finally {
      cursor.close();
   }
+  if (p==null) return "";
   return p;
 }
 /*

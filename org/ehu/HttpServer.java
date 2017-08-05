@@ -103,6 +103,7 @@ public class HttpServer extends RouterNanoHTTPD {
                       Bkt bkt = new Bkt();
                       /* check whether bkt parameters are setted by skill */
                       String params = dbi.getSkillBktParams(id,skill);
+                      System.out.println("Using bkt parameters:"+params);
                       if (!params.equals("")){
                         String [] p = params.split(",");
                         bkt.setParameters(Double.parseDouble(p[0]),Double.parseDouble(p[1]),Double.parseDouble(p[2]),Double.parseDouble(p[3]));
@@ -136,23 +137,29 @@ public class HttpServer extends RouterNanoHTTPD {
                       String[] vect1 = dbi.getStudentSkills(id);
                       System.out.println("student SKILLS "+vect1[0]+vect1[1]);
                     /* Get user pknow, and create low pknown vector */
-                    double[] vec1 = new double[1];
+                    List<Double> vec1 = new ArrayList<Double>();
+                    double [] vec = null;
                     for (int i =0; i<vect1.length;i++){
-                      double pknown = dbi.getSkillPknow(id,vect1[i]);
-                      if (pknown<0.5){
-                        vec1 = push(vec1,pknown);
-                      }
-                      else {
-                        /** remove skill whether knowns **/
-                        final List<String> list =  new ArrayList<String>();
-                        Collections.addAll(list, vect1);
-                        list.remove(vect1[i]);
-                        vect1 = list.toArray(new String[list.size()]);
+                      if (vect1[i]!=null){
+                          System.out.println(i);
+                          double pknown = dbi.getSkillPknow(id,vect1[i]);
+                          if (pknown<0.5){
+                            vec1.add((1-pknown));
+                            //System.out.println(">>>"+vec1[0]);
+                          }
+                          else {
+                            /** remove skill whether knowns **/
+                            System.out.println("whether knowns removing skill for compare");
+                            final List<String> list =  new ArrayList<String>();
+                            Collections.addAll(list, vect1);
+                            list.remove(vect1[i]);
+                            vect1 = list.toArray(new String[list.size()]);
+                          }
                       }
                     }
                     /* Normalize vector before send */
-
-                     String result = dbi.getRelatedSubjectByPknows(vec1,vect1);
+                     vec = vec1.stream().mapToDouble(Double::doubleValue).toArray();
+                     String result = dbi.getRelatedSubjectByPknows(vec,vect1);
                      text = result;
 
                   }
@@ -516,6 +523,7 @@ public class HttpServer extends RouterNanoHTTPD {
       }
   private static double[] push(double[] array, double push) {
       double[] longer = new double[array.length + 1];
+      System.out.println("Pushing "+push);
       for (int i = 0; i < array.length; i++)
           longer[i] = array[i];
       longer[array.length] = push;

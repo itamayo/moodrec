@@ -12,6 +12,7 @@ public class VectorSpaceModel {
        dotProduct += vectorA[i] * vectorB[i];
        normA += Math.pow(vectorA[i], 2);
        normB += Math.pow(vectorB[i], 2);
+       System.out.println(vectorA[i]+" "+vectorB[i]);
      }
 
      return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
