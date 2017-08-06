@@ -70,6 +70,25 @@ public  class DBInterface {
   }
 
   /*
+  Get user ID by user name
+
+  */
+  public String getUserID (String name){
+    Document query = new Document();
+    query.put("name", name);
+    MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+    if (cursor==null || !cursor.hasNext()) {
+      System.out.println("here fails !");
+      System.out.println(cursor.hasNext());
+      return "none";
+    }
+    else {
+      Document c = cursor.next();
+      return c.get("_id").toString();
+    }
+    //return "none";
+  }
+  /*
     Ensure user and token; also priviliges
 
   */
@@ -216,9 +235,12 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
   class similarities implements Comparable<similarities>{
     double sim = 0.0;
     ArrayList<String>  docs;
-    public similarities(double s,ArrayList<String> d){
+    String skills;
+
+    public similarities(double s,ArrayList<String> d,String sk){
       this.sim =s;
       this.docs = d;
+      this.skills = sk;
     }
     @Override
     public int compareTo(similarities s1) {
@@ -279,7 +301,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
         double sim = vectorSpaceModel.getSimilarity(vec1,knowns_vector1);
         System.out.println(sim);
         if (sim>0.35){
-           sims.add(new similarities(sim,docs));
+           sims.add(new similarities(sim,docs,skills));
 
         }
     }
@@ -293,7 +315,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
  for(similarities sim:sims){
    System.out.println(sim.docs);
    System.out.println(sim.sim);
-   result+="{\"sim\":"+sim.sim+",\"docs\":[";
+   result+="{\"sim\":"+sim.sim+",\"skills\":\""+sim.skills+"\",\"docs\":[";
    for(String doc:sim.docs){
      result+="\""+doc+"\",";
    }
@@ -458,9 +480,10 @@ public String getSkillBktParams (String stdId, String skill){
         while (cr.hasNext()){
             Document sk = cr.next();
             String name = (String)sk.get("name");
-            if (name.equals(skill)){
+            if (name!=null && name.equals(skill)){
               p = (String)sk.get("bktParams");
             }
+            else return "";
 
         }
     //    System.out.println(c.toJson(),skills);
@@ -481,6 +504,87 @@ public String getSkillBktParams (String stdId, String skill){
   }
   if (p==null) return "";
   return p;
+}
+
+/*
+  get skills filtered by group
+*/
+
+public String[] getSkillOfGroup (String exId){
+  String[] sks = new String[100];
+  Iterator<Document> cr;
+  Document query = new Document();
+  query = new Document("id", new ObjectId(exId));
+   MongoCursor<Document> cursor = exerciseAttr.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+      Document c = cursor.next();
+      String group = (String)c.get("group");
+
+
+
+   }
+   // SKill is new for student
+   else{
+     System.out.println(">>>>> ERROR getting group <<<<<");
+
+   }
+  } finally {
+     cursor.close();
+  }
+  return sks;
+}
+/*
+  get student skills filtere
+*/
+
+public String[] getStudentSkills (String stdId,String exId){
+  String[] sks = new String[100];
+  Iterator<Document> cr;
+  Document query = new Document();
+/*  if (!exId.equals('none')){
+    dbi.getSkillOfGroup(exId);
+  }
+  */
+  query = new Document("_id", new ObjectId(stdId));
+   MongoCursor<Document> cursor = studentSkills.find(query).iterator();
+  try {
+    // SKill already exists
+    if (cursor.hasNext()){
+      Document c = cursor.next();
+      List<Document> skills = (List<Document>)c.get("skills");
+      cr = skills.iterator();
+
+      try {
+        int i =0 ;
+        while (cr.hasNext()){
+            Document sk = cr.next();
+            String name = (String)sk.get("name");
+            sks[i] = name;
+            System.out.println("getting skill");
+            System.out.println(name);
+            i++;
+        }
+    //    System.out.println(c.toJson(),skills);
+
+
+    }
+     finally {
+        cursor.close();
+     }
+   }
+   // SKill is new for student
+   else{
+     /*System.out.println("Adding no existing skill for user, with default values");
+     this.addSkill(stdId,skill);
+     return 0.3;*/
+
+   }
+  } finally {
+     cursor.close();
+  }
+  return sks;
 }
 /*
   get student skills

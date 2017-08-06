@@ -6,21 +6,60 @@
   <script src="MoodRec.client.js"></script>
 </head>
 <body>
-  <div class="row">
-  <div class="col-sm-3">
-    <h2 style="background:#337ab7;width:106%;padding-top:12px;padding-bottom:12px;text-align:center;color:white;margin:0px;"> Console</h2>
-    <div class="console">
+  <div id="container" class="row ikusezin">
+    <div class="col-sm-3">
+      <h2 style="background:#337ab7;width:106%;padding-top:12px;padding-bottom:12px;text-align:center;color:white;margin:0px;"> Console<span class="close" onclick="MoodRec.closeSession()">Close session</span></h2>
+      <div class="console">
+      </div>
+    </div>
+    <div class="col-sm-9">
+      <div class="container-fluid bg-info">
+        <div class="modal-dialog">
+
+
+        </div>
+      </div>
     </div>
   </div>
-  <div class="col-sm-9">
-  <div class="container-fluid bg-info">
-    <div class="modal-dialog">
+  <div id="login1">
+
+    <section id="login">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-wrap">
+              <h1>Erabiltzaile datuak sartu</h1>
+              <form role="form" action="javascript:;" method="post" id="login-form" autocomplete="off">
+                <div class="form-group">
+                  <label for="email" class="sr-only">Erabiltzailea</label>
+                  <input type="email" name="email" id="erabiltzaile" class="form-control" placeholder="Erabiltzailea">
+                </div>
+                <div class="form-group">
+                  <label for="key" class="sr-only">Token</label>
+                  <input type="password" name="key" id="token" class="form-control" placeholder="token">
+                </div>
+                <div class="form-group">
+                  <label for="ariketa" class="sr-only">Token</label>
+                  <select  name="ariketa" id="ariketa" class="form-control" placeholder="Ariketa aukeraty">
+                    <option selected disabled>Aukeratu ariketak</option>
+                    <option value="Ariketak1">Egutegi Ariketak</option>
+                    <option value="Ariketak2">Probabilitate Ariketak</option>
+                  </select>
+                </div>
+
+                <input type="button" onclick="MoodRec.login()" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Sartu">
+              </form>
+              <a href="javascript:;" class="forget" data-toggle="modal" data-target=".forget-modal">Tokena ahaztu zaizu ?</a>
+              <hr>
+            </div>
+          </div> <!-- /.col-xs-12 -->
+        </div> <!-- /.row -->
+      </div> <!-- /.container -->
+    </section>`;
 
 
-</div>
-</div>
-</div>
-</div>
 
+
+  </div>
 </body>
 </html>

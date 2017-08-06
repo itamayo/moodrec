@@ -33,12 +33,12 @@
      </div>
      </div>`;
    }
-   MoodRec.callBackend('/exerciseAttr/get/none/none/none/none/none/none/none/tri70f9g8trtegq8rif7bth93n',function(err,res){
+   MoodRec.callBackend('/exerciseAttr/get/none/none/none/none/none/none/none/'+localStorage.getItem('token'),function(err,res){
        console.log(res);
        var exs = res.result;
        var container = document.querySelector('.modal-dialog')
        exs.forEach(function(e,i){
-          if (e.group =="Ariketak1"){
+          if (e.group ==localStorage.getItem('ariketa')){
              container.innerHTML+=MoodRec.getGalderaTempate(i);
              var h2 = document.querySelector('#title_'+i);
              h2.innerHTML = e.question;
@@ -89,15 +89,26 @@
 
  var getResults = function (ex){
         var div = document.querySelector('.console');
-        MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/597a1e78564430786468c875/"+ex.ans+"/"+ex.id+"/none/tri70f9g8trtegq8rif7bth93n",function(err,res){
+        MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/"+localStorage.getItem('user')+"/"+ex.ans+"/"+ex.id+"/none/"+localStorage.getItem('token'),function(err,res){
         if (err) {console.warn(err);}
         else {
 
           div.innerHTML+="<p> Probability of know it:"+res.pknow+"</p>";
           if (parseFloat(res.pknow)<0.55){
-            div.innerHTML+="<p> Recomendation based of low known of "+ex.skill+"</p>";
-            MoodRec.callBackend('/studentSkill/getUserRecommendation/none/597a1e78564430786468c875/none/none/none/tri70f9g8trtegq8rif7bth93n',function(err,res){
-                div.innerHTML+="<div>Recommended documentation:"+JSON.stringify(res.docs);
+            div.innerHTML+="<p> Recomendation based of low known of user general skills</p>";
+            MoodRec.callBackend('/studentSkill/getUserRecommendation/none/'+localStorage.getItem('user')+'/none/none/none/'+localStorage.getItem('token'),function(err,res){
+                div.innerHTML+="<div>Recommended documentation:"+JSON.stringify(res.docs)+"</div>";
+                var objs = res.docs;
+                objs = objs.filter(function(o){
+                  var listSkills = ex.skill.split(',');
+                  for (i=0;i<listSkills.length;i++){
+                    if (o.skills.split(',').indexOf(listSkills[i])!=-1){
+                       return true;
+                    }
+                  }
+                  return false;
+                })
+                div.innerHTML+="<div style='font-weight:bold;'>Filtered by skills of the exercises,Recommended documentation:"+JSON.stringify(objs)+"</div>";
             });
 
           }
@@ -108,7 +119,42 @@
 
 
  }
+ var login = function(){
+   var user = document.querySelector('#erabiltzaile').value;
+   var token = document.querySelector('#token').value;
+   var ariketa = document.querySelector('#ariketa').value;
+
+   MoodRec.callBackend('/admin/login/'+user+'/false/'+token,function(err,res){
+      console.log("login",err,res);
+      if (err) {
+        alert("Ez da ondo identifikatu");
+
+      }
+      else {
+        if (res.response && res.response=="invalid") return;
+        var c = document.querySelector('#container')
+        c.className = c.className.replace("ikusezin","");
+        localStorage.setItem("user",res.id);
+        localStorage.setItem("token",res.token);
+        localStorage.setItem("admin",res.admin);
+        localStorage.setItem("ariketa",ariketa);
+        document.querySelector('#login1').className="ikusezin";
+        getTest.apply(this);
+    }
+
+   });
+ }
+ var closeSession = function(){
+   localStorage.removeItem("user");
+   localStorage.removeItem("token");
+   localStorage.removeItem("admin");
+   localStorage.removeItem("ariketa");
+   document.location.reload();
+ }
  var getExercices = function (){
+   return exercises;
+ }
+ var getExercicesGroups = function (){
    return exercises;
  }
  var callBackend = function (url,cb){
@@ -128,9 +174,12 @@
   var API = {
       "getExercices":getExercices,
       "callBackend":callBackend,
+      "login":login,
       "getResults":getResults,
+      "closeSession":closeSession,
+      "getExercicesGroups":getExercicesGroups,
       "backend":"http://localhost:8888"
   }
-  document.addEventListener('DOMContentLoaded',getTest.bind(this));
+
   scope.MoodRec = API;
 })(window);

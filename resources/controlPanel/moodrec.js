@@ -231,8 +231,9 @@
       if (err) {
         alert("Ez da ondo identifikatu");
       }
-      if (res.response && res.response=="invalid") return;
+
       else {
+      if (res.response && res.response=="invalid") return;
       console.log("admin",res.admin);
       if (res.admin){
         var els = document.querySelectorAll('[role=two]');
@@ -412,7 +413,8 @@ sesioaItxi = function(){
           var answer = document.querySelector('#answer').value;
           var answers = document.querySelector('#answers').value;
           var group = document.querySelector('#group').value;
-          callBackend('/exerciseAttr/create/'+id || 'none'+'/'+sv+'/'+skill+'/'+question+'/'+answers+'/'+answer+'/'+group+'/'+localStorage.getItem('token'),function(err,result){
+          id = (id || 'none');
+          callBackend('/exerciseAttr/create/'+id+'/'+sv+'/'+skill+'/'+question+'/'+answers+'/'+answer+'/'+group+'/'+localStorage.getItem('token'),function(err,result){
             if(err) console.error("Error saving",err);
             MoodRec.Panel.hide();
             MoodRec.renderArikerak(document.querySelector('#ariketak'));

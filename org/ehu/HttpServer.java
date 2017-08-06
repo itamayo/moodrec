@@ -79,6 +79,7 @@ public class HttpServer extends RouterNanoHTTPD {
             }
 
             public String getText(Map<String, String> urlParams, IHTTPSession session) {
+              System.out.println(session.getCookies());
               DBInterface dbi = new DBInterface();
               String text = "";
               System.out.println("ID"+urlParams.get("id"));
@@ -134,35 +135,49 @@ public class HttpServer extends RouterNanoHTTPD {
                   }
                   else if (cmd.equals("getUserRecommendation")){
 
-                      String[] vect1 = dbi.getStudentSkills(id);
+                      String[] vect1 = dbi.getStudentSkills(id,"none");
                       System.out.println("student SKILLS "+vect1[0]+vect1[1]);
                     /* Get user pknow, and create low pknown vector */
                     List<Double> vec1 = new ArrayList<Double>();
+                    final List<String> list =  new ArrayList<String>();
+                    for (int x =0 ; x< vect1.length;x++){
+                      if (vect1[x]!=null) {
+                        System.out.println("initing vect1 value: "+vect1[x]);
+                        list.add(vect1[x]);
+                      }
+                    }
                     double [] vec = null;
+
+
                     for (int i =0; i<vect1.length;i++){
                       if (vect1[i]!=null){
-                          System.out.println(i);
+                          System.out.println("size of vect1;"+i+ " "+list.size());
                           double pknown = dbi.getSkillPknow(id,vect1[i]);
+                          System.out.println(">>>PKNOWN: "+pknown);
                           if (pknown<0.5){
                             vec1.add((1-pknown));
                             //System.out.println(">>>"+vec1[0]);
                           }
                           else {
                             /** remove skill whether knowns **/
-                            System.out.println("whether knowns removing skill for compare");
-                            final List<String> list =  new ArrayList<String>();
-                            Collections.addAll(list, vect1);
+                            System.out.println("whether knowns removing skill for compare: "+vect1[i]);
                             list.remove(vect1[i]);
-                            vect1 = list.toArray(new String[list.size()]);
+                            System.out.println("Size of list: "+list.size());
                           }
                       }
                     }
+                    vect1 = list.toArray(new String[list.size()]);
                     /* Normalize vector before send */
                      vec = vec1.stream().mapToDouble(Double::doubleValue).toArray();
+
+                     System.out.println("Debugger" + vec.length);
+                     System.out.println("Debugger" + vect1.length);
+
                      String result = dbi.getRelatedSubjectByPknows(vec,vect1);
                      text = result;
 
                   }
+
                 }
                 return text;
             }
@@ -254,6 +269,7 @@ public class HttpServer extends RouterNanoHTTPD {
         }
 
         public String getText(Map<String, String> urlParams, IHTTPSession session) {
+              System.out.println(session.getCookies().read("token"));
             DBInterface dbi = new DBInterface();
             String text = "";
             System.out.println("ID "+urlParams.get("id"));
@@ -421,7 +437,8 @@ public class HttpServer extends RouterNanoHTTPD {
             String cmd = urlParams.get("cmd");
             String admin = urlParams.get("admin");
             String token = urlParams.get("token");
-
+            id = dbi.getUserID(id);
+            System.out.println("USERID: "+id);
             if (cmd.equals("create")){
               String _id = dbi.createNewToken(id,admin);
               text = "{\"response\":\"token added\",\"id\":\""+_id+"\"}";
@@ -440,8 +457,9 @@ public class HttpServer extends RouterNanoHTTPD {
                 if (auth.equals("admin")  || auth.equals("user")){
                     if (auth.equals("admin")){
                       text ="{\"admin\":true,\"id\":\""+id+"\",\"token\":\""+token+"\"}";
-                    }
+                      }
                     else {
+
                       text ="{\"admin\":false,\"id\":\""+id+"\",\"token\":\""+token+"\"}";
                     }
                 }
