@@ -32,6 +32,7 @@ public  class DBInterface {
   MongoCollection<Document> studentSkills;
   MongoCollection<Document> subject;
   MongoCollection<Document> exerciseAttr;
+  MongoCollection<Document> skillParameters;
   MongoCollection<Document> Security;
   public DBInterface(){
     try {
@@ -42,11 +43,13 @@ public  class DBInterface {
       subject = db.getCollection("subject");
       studentSkills = db.getCollection("StudentSkills");
       exerciseAttr = db.getCollection("exerciseAttr");
+      skillParameters = db.getCollection("skillParameters");
       Security = db.getCollection("security");
 
     }
     catch (Exception e){}
   }
+
   /*
     create a new user token
 
@@ -772,7 +775,8 @@ public String getAllSubjects (){
 /*
   add exerciseAttr
 */
-public String addExerciseAttr (String id,String vector,String subjects,String response,String question,String answers,String group){
+public String addExerciseAttr (String id,String vector,String subjects,String response,String question,
+String answers,String group,String bktP){
   Document subj = new Document();
   subj.put("subjects",Arrays.asList(subjects));
   subj.put("id",id);
@@ -781,6 +785,7 @@ public String addExerciseAttr (String id,String vector,String subjects,String re
   subj.put("question",question);
   subj.put("answers",answers);
   subj.put("group",group);
+  subj.put("bktParameters",bktP);
   exerciseAttr.insertOne(subj);
   return subj.get("_id").toString();
 }

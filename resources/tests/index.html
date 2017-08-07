@@ -42,8 +42,7 @@
                   <label for="ariketa" class="sr-only">Token</label>
                   <select  name="ariketa" id="ariketa" class="form-control" placeholder="Ariketa aukeraty">
                     <option selected disabled>Aukeratu ariketak</option>
-                    <option value="Ariketak1">Egutegi Ariketak</option>
-                    <option value="Ariketak2">Probabilitate Ariketak</option>
+                
                   </select>
                 </div>
 
@@ -63,3 +62,20 @@
   </div>
 </body>
 </html>
+<script>
+MoodRec.callBackend('/exerciseAttr/get/none/none/none/none/none/none/none/none/auxtoken',function(err,res){
+    if(err) console.error("Getting exercises groups");
+    var exs = res.result;
+    var groups = [];
+    exs.forEach(function(e){
+      if (groups.indexOf(e.group)==-1) groups.push(e.group);
+    });
+    var select = document.querySelector('#ariketa');
+    groups.forEach(function(name){
+       var opt = document.createElement('option');
+       opt.value = name;
+       opt.innerHTML = name;
+       select.appendChild(opt);
+    });
+});
+</script>

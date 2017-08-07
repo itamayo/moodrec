@@ -105,10 +105,11 @@ public class HttpServer extends RouterNanoHTTPD {
           for (int i = 0; i<skills.length;i++){
             Bkt bkt = new Bkt();
             /* check whether bkt parameters are setted by skill */
-            String params = dbi.getSkillBktParams(id,skills[i]);
-            System.out.println("Using bkt parameters:"+params);
-            if (!params.equals("")){
-              String [] p = params.split(",");
+          //  String params = dbi.getSkillBktParams(id,skills[i]);
+          //  System.out.println("Using bkt parameters:"+params);
+
+            if (!bktP.equals("none")){
+              String [] p = bktP.split(",");
               bkt.setParameters(Double.parseDouble(p[0]),Double.parseDouble(p[1]),Double.parseDouble(p[2]),Double.parseDouble(p[3]));
             }
             double savedPknow = dbi.getSkillPknow(id,skills[i]);
@@ -379,17 +380,17 @@ public class HttpServer extends RouterNanoHTTPD {
       String answers = urlParams.get("answers");
       String question = urlParams.get("question");
       String group = urlParams.get("group");
+      String bktP = urlParams.get("bktParams");
       String token = urlParams.get("token");
       String auth = dbi.authByToken(token);
-      if (auth.equals("admin")  || auth.equals("user")){
-        if (cmd.equals("create")){
-          String _id = dbi.addExerciseAttr(id,vector,subjects,answer,question,answers,group);
+      if (auth.equals("admin") && cmd.equals("create")){
+          String _id = dbi.addExerciseAttr(id,vector,subjects,answer,question,answers,group,bktP);
           text = "{\"response\":\"exerciseAttr added\",\"id\":\""+_id+"\"}";
         }
         else if (cmd.equals("update")){
           //text = dbi.getStudent(id);
         }
-        else if (cmd.equals("remove")){
+        else if (auth.equals("admin") && cmd.equals("remove")){
           text = dbi.removeExercise(id);
         }
         else if (cmd.equals("get")){
@@ -410,7 +411,7 @@ public class HttpServer extends RouterNanoHTTPD {
           double result = new VectorSpaceModel().getSimilarity(vec1,vec2);
           System.out.println("Similarity;"+result);
         }
-      }
+
 
       return text;
     }
@@ -544,8 +545,8 @@ public class HttpServer extends RouterNanoHTTPD {
     super.addMappings();
     addRoute("/student/:cmd/:id:/:token", StudentHandler.class);
     addRoute("/subject/:cmd/:id/:skills/:vector/:doc/:token", SubjectHandler.class);
-    addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:question/:answers/:answer/:group/:token", ExerciseAttributesHandler.class);
-    addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/:btkParams/:token", StudentSkillHandler.class);
+    addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:question/:answers/:answer/:group/:bktParams/:token", ExerciseAttributesHandler.class);
+    addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/:bktParams/:token", StudentSkillHandler.class);
     addRoute("/admin/:cmd/:id/:admin/:token", AuthManagerHandler.class);
     addRoute("/browse/(.)+", StaticPageTestHandler.class, new File("./resources").getAbsoluteFile());
   }
