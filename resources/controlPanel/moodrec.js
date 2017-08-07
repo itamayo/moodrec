@@ -115,9 +115,13 @@
     callBackend('/exerciseAttr/get/none/none/none/none/none/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting exercies");
       var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('ariketak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Ariketa</span>";
-       html +="<table class='table'><tr><th>Id</th><th> Bektorea</th><th> Bektore kuant.</th><th></th></tr>";
+       html +="<table class='table'><tr><th>Id</th><th> Taldea</th><th> Bektorea</th><th> Bektore kuant.</th><th>Galderak</th><th>Erantzunak</th><th>ER.Zuzena</th><th></th></tr>";
        res.result.forEach(function(ex){
-          html+="<tr><td>"+ex.id+"</td><td>"+ex.subjects+"</td><td>"+ex.spaceVector+"</td><td onclick=MoodRec.remove('"+ex._id.$oid+"','ariketa')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
+          var taldea = ex.group || "none";
+          var question = ex.question || "none";
+          var answers = ex.answers || "none";
+          var ans = ex.response || "none";
+          html+="<tr><td>"+ex.id+"</td><td>"+taldea+"</td><td>"+ex.subjects+"</td><td>"+ex.spaceVector+"</td><td>"+question+"</td><td>"+answers+"</td><td>"+ans+"</td><td onclick=MoodRec.remove('"+ex._id.$oid+"','ariketa')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -126,7 +130,7 @@
 
  }
  var renderIkasleak = function (el){
-    callBackend('/studentSkill/get/none/none/true/none/'+localStorage.getItem('token'),function(err,res){
+    callBackend('/studentSkill/get/none/none/true/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting exercies");
       var html = `<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleEzagupena')><img width=30 height=30 src="/browse/icons/add.png">Gehitu Ezagupena</span>
       <span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/addUser.png'>Gehitu Ikaslea</span>`;
@@ -138,6 +142,7 @@
           })
           html+="</td><td onclick=MoodRec.remove('"+ik._id.$oid+"','ikaslea')><img width='30' height='30' src='/browse/icons/remove.png'></td>";
           html+="</td><td onclick=MoodRec.Panel.show('gm');MoodRec.showUserRecommendation('"+ik._id.$oid+"','gm')><img width='30' height='30' src='/browse/icons/recommendation.png'></td>";
+          html+="</td><td onclick=MoodRec.Panel.show('sec');MoodRec.showSecData('"+ik._id.$oid+"','sec')><img width='30' height='30' src='/browse/icons/key.png'></td>";
 
        })
        html+="</table>";
@@ -162,7 +167,7 @@
 
  }
  var renderGomendioak = function (el){
-    callBackend('/studentSkill/getUserRecommendation/none/'+localStorage.getItem('user')+'/none/none/'+localStorage.getItem('token'),function(err,res){
+    callBackend('/studentSkill/getUserRecommendation/none/'+localStorage.getItem('user')+'/none/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting Recomendations");
       var html = "";
        html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
@@ -176,9 +181,25 @@
     });
 
  }
+ var showSecData = function (id,el){
+    var el = document.querySelector('#'+el);
+    callBackend('/admin/get/'+id+'/true/'+localStorage.getItem('token'),function(err,res){
+      if (err) console.error("Error getting Recomendations");
+      var html = "<span style='position:relative;top:0px;left:90%;color:green;' onclick='MoodRec.Panel.hide()'> X </span>";
+       html +="<table  class='table'><tr><th>Token</th><th> Admin</th></tr>";
+
+          html+="<tr><td>"+res.token+"</td><td>"+res.admin+"</td></tr>";
+
+       html+="</table>";
+       el.innerHTML = html;
+       el.className = el.className.replace("ikusezin","");
+
+    });
+
+ }
  var showUserRecommendation = function (id,el){
     var el = document.querySelector('#'+el);
-    callBackend('/studentSkill/getUserRecommendation/none/'+id+'/none/noene/'+localStorage.getItem('token'),function(err,res){
+    callBackend('/studentSkill/getUserRecommendation/none/'+id+'/none/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting Recomendations");
       var html = "<span style='position:relative;top:0px;left:90%;color:green;' onclick='MoodRec.Panel.hide()'> X </span>";
        html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
@@ -273,7 +294,8 @@
  }
  var callBackend = function (url,cb){
     document.querySelector('#ariketak').className="ikusezin";
-    if(url.indexOf('studentSkill')==-1)document.querySelector('#ikasleak').className="ikusezin";
+    if(url.indexOf('studentSkill')!=-1 || url.indexOf('admin')!=-1)
+    document.querySelector('#ikasleak').className="";
     document.querySelector('#gaiak').className="ikusezin";
 
      var xmlhttp = new XMLHttpRequest();
@@ -372,6 +394,8 @@ sesioaItxi = function(){
                        </div>`,
        gmTemplate:`<div class="panel" id="gm">
                          </div>`,
+        secTemplate:`<div class="panel" id="sec">
+                     </div>`,
       show:function(id){
           if (id=="ikasleak"){
              var x = document.querySelector('.panel');
@@ -397,6 +421,11 @@ sesioaItxi = function(){
              var x = document.querySelector('.panel');
              if (x) document.body.removeChild(x);
              document.body.innerHTML += this.gmTemplate;
+          }
+          if (id=="sec"){
+             var x = document.querySelector('.panel');
+             if (x) document.body.removeChild(x);
+             document.body.innerHTML += this.secTemplate;
           }
       },
       hide:function(id){
@@ -472,6 +501,7 @@ sesioaItxi = function(){
       "showUserRecommendation":showUserRecommendation,
       "checkLogin":checkLogin,
       "login":login,
+      "showSecData":showSecData,
       "SesioaItxi":sesioaItxi,
       "Panel": new Panel(),
       "remove":remove,

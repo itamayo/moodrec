@@ -218,6 +218,31 @@ public String getAllStudent (){
   json+="]}";
   return json;
 }
+/*
+  get secutiry info
+*/
+public String getAuthData (String stdId){
+  String tnp = new String("");
+  Boolean ad = false;
+
+  Document query = new Document();
+  query.put("id",stdId);
+  System.out.println("SECURITY GETTIN USER INFO");
+
+  MongoCursor<Document> cursor = Security.find(query).iterator();
+    try {
+       while(cursor.hasNext()) {
+           System.out.println("SECURITY GETTIN USER INFO");
+           Document c = cursor.next();
+           tnp =(String) c.get("token");
+           ad =(Boolean) c.get("admin");
+
+       }
+    } finally {
+       cursor.close();
+    }
+    return "{\"token\":\""+tnp+"\",\"admin\":"+ad+"}";
+}
 
 /* add
    Subject
@@ -268,9 +293,10 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
           System.out.println("knows larger");
           for (int i = 0; i<knowns.length;i++){
             if (knowns[i]!=null){
-                System.out.println("knows checking "+knowns[i]+" "+doc_skills[0]);
+
                 int ind = Arrays.asList(doc_skills).indexOf(knowns[i]);
                 if (ind!=-1){
+                    System.out.println("knows checking "+knowns[i]+" "+skills);
                     System.out.println("barruan "+ind+" "+vector[i]);
                     knowns_vector.add(ind,new Double(vector[i]));
                 }
@@ -286,7 +312,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
          for (int i = 0; i<doc_skills.length;i++){
            int ind = Arrays.asList(knowns).indexOf(doc_skills[i]);
            if ( ind!=-1){
-               knowns_vector.add(i,new Double(vector[i]));
+               knowns_vector.add(ind,new Double(vector[ind]));
            }
            else knowns_vector.add(new Double(0.0));
          }
@@ -300,7 +326,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
 
         double sim = vectorSpaceModel.getSimilarity(vec1,knowns_vector1);
         System.out.println(sim);
-        if (sim>0.35){
+        if (sim>0.09){
            sims.add(new similarities(sim,docs,skills));
 
         }
@@ -430,7 +456,7 @@ catch (Exception e){
   get correct answer
 */
 
-public String getAnswer (String exId,String correct){
+public String getAnswer (String exId,String ans1){
   String ans ="";
   Document query = new Document();
   query.put("id",exId);
@@ -440,8 +466,8 @@ public String getAnswer (String exId,String correct){
     if (cursor.hasNext()){
       Document c = cursor.next();
        ans = (String)c.get("response");
-       System.out.println("ans "+ans+correct);
-      if (ans.equals(correct)){
+       System.out.println("ans "+ans+" "+ans1);
+      if (ans.equals(ans1)){
          ans = "true";
       }
       else ans ="false";
