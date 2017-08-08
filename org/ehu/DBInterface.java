@@ -127,7 +127,7 @@ public  class DBInterface {
     query.put("token", token);
     MongoCursor<Document> cursor = Security.find(query).iterator();
     if (cursor==null || !cursor.hasNext()) {
-      System.out.println("here fails !");
+      System.out.println("here fails ! token used: "+token);
       return "none";
     }
     else {
@@ -148,11 +148,11 @@ public  class DBInterface {
   add student data
 
 */
-public String addStudent (String name){
+public String addStudent (String name,String admin){
   Document doc = new Document("name", name);
   doc.put("skills",Arrays.asList());
   studentSkills.insertOne(doc);
-  this.createNewToken(doc.get("_id").toString(),"false");
+  this.createNewToken(doc.get("_id").toString(),admin);
   return doc.get("_id").toString();
 }
 /*
@@ -161,6 +161,7 @@ public String addStudent (String name){
 */
 public String removeStudent (String id){
   studentSkills.deleteOne(new Document("_id", new ObjectId(id)));
+  Security.deleteOne(new Document("id", id));
   return "{\"result\":\"ok\"}";
 }
 public void prinStudentsData (){

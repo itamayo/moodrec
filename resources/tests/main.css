@@ -66,7 +66,7 @@
   width:106%;
   background: white;
   height:100%;
-  overflow-x:auto;
+  overflow:auto;
 }
 body{
   background: #d9edf7 !important;

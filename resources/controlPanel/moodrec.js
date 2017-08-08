@@ -99,13 +99,13 @@
       })
     }
     if (type=="gaia"){
-      callBackend('/subject/remove/'+id+'/none/none/none'+localStorage.getItem('token'),function(err,result){
+      callBackend('/subject/remove/'+id+'/none/none/none/'+localStorage.getItem('token'),function(err,result){
          if (err) console.error(err);
          MoodRec.renderGaiak(document.querySelector('#gaiak'));
       })
     }
     if (type=="ikaslea"){
-      callBackend('/student/remove/'+id+'/'+localStorage.getItem('token'),function(err,result){
+      callBackend('/student/remove/'+id+'/none/'+localStorage.getItem('token'),function(err,result){
          if (err) console.error(err);
          MoodRec.renderIkasleak(document.querySelector('#ikasleak'));
       })
@@ -133,7 +133,7 @@
     callBackend('/studentSkill/get/none/none/true/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting exercies");
       var html = `<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleEzagupena')><img width=30 height=30 src="/browse/icons/add.png">Gehitu Ezagupena</span>
-      <span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/addUser.png'>Gehitu Ikaslea</span>`;
+      <span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/addUser.png'>Gehitu Erabiltzailea</span>`;
        html +="<table  class='table'><tr><th>Id</th><th> Izena</th><th> Ezagupenak</th></tr>";
        res.result.forEach(function(ik){
           html+="<tr><td>"+ik._id.$oid+"</td><td>"+ik.name+"</td><td>";
@@ -337,6 +337,10 @@ sesioaItxi = function(){
                       <input id="ikIzena" value="">
                      </fieldset>
                      <fieldset>
+                     <legend> Administradorea al da ?</legend>
+                      <input id="admin" value="" placeholder="true/false">
+                     </fieldset>
+                     <fieldset>
                      <button  onclick="MoodRec.Panel.save('ikaslea')"> Gehitu</button>
                      </div>`,
      ariketakTemplate:`<div class="panel" id="pAriketak">
@@ -477,7 +481,8 @@ sesioaItxi = function(){
         }
         else if(type=="ikaslea"){
           var izena = document.querySelector('#ikIzena').value;
-          callBackend('/student/create/'+izena,function(err,result){
+          var admin = document.querySelector('#admin').value;
+          callBackend('/student/create/'+izena+'/'+admin+'/'+localStorage.getItem('token'),function(err,result){
             if(err) console.error("Error saving",err);
             MoodRec.Panel.hide();
             MoodRec.renderIkasleak(document.querySelector('#ikasleak'));

@@ -237,10 +237,12 @@ public class HttpServer extends RouterNanoHTTPD {
       String cmd = urlParams.get("cmd");
       String vector = urlParams.get("vector");
       String token = urlParams.get("token");
+      String adm = urlParams.get("admin");
       String auth = dbi.authByToken(token);
+
       if (auth.equals("admin")  || auth.equals("user")){
         if (cmd.equals("create")){
-          String _id = dbi.addStudent(id);
+          String _id = dbi.addStudent(id,adm);
           text = "{\"response\":\"student added\",\"id\":\""+_id+"\"}";
         }
         else if (cmd.equals("update")){
@@ -543,7 +545,7 @@ public class HttpServer extends RouterNanoHTTPD {
   @Override
   public void addMappings() {
     super.addMappings();
-    addRoute("/student/:cmd/:id:/:token", StudentHandler.class);
+    addRoute("/student/:cmd/:id/:admin/:token", StudentHandler.class);
     addRoute("/subject/:cmd/:id/:skills/:vector/:doc/:token", SubjectHandler.class);
     addRoute("/exerciseAttr/:cmd/:id/:vector/:subjects/:question/:answers/:answer/:group/:bktParams/:token", ExerciseAttributesHandler.class);
     addRoute("/studentSkill/:cmd/:skill/:id/:correct/:exId/:bktParams/:token", StudentSkillHandler.class);
