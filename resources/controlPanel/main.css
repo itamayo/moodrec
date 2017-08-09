@@ -1,0 +1,186 @@
+#header{
+  background-color: #1fa67b;
+  width:15%;
+  padding:10px;
+  height:100%;
+  float:left;
+}
+#header button {
+  background: #110056;
+  color:white;
+}
+.ikusezin{
+  display:none;
+}
+td{
+  padding:20px;
+}
+th{
+  padding:10px;
+}
+.panel{
+  position:absolute;
+  top:1%;
+  left:35%;
+  width:30%;
+  border:1px solid green;
+  background: white;
+  padding:10px;
+}
+#ariketak,#gaiak,#ikasleak,#gomendioak{
+  width:80%;
+  padding-left:30%;
+  padding-top: 5%;
+}
+table{
+  margin-top:50px;
+}
+.menu{
+  padding-left:30px;
+}
+#title{
+  font-size: 25pt;
+  text-align: center;
+  color:white;
+  font-weight: bold;
+}
+.selected{
+   color:white;
+   font-style: bold;
+}
+li,span{
+  cursor: pointer;
+}
+.panel{
+  box-shadow: 10px 10px 5px #888888;
+  background: #ddd;
+}
+fieldset {
+    font-family: sans-serif;
+    border: 5px solid #1fa67b;
+    background: #ddd;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+fieldset legend {
+    background: #1fa67b;
+    color: #fff;
+    padding: 5px 10px ;
+    font-size: 32px;
+    border-radius: 5px;
+    box-shadow: 0 0 0 5px #ddd;
+    margin-left: 20px;
+}
+button {
+  margin-left:150px;
+  background: #42d934;
+  background-image: -webkit-linear-gradient(top, #42d934, #2bb86d);
+  background-image: -moz-linear-gradient(top, #42d934, #2bb86d);
+  background-image: -ms-linear-gradient(top, #42d934, #2bb86d);
+  background-image: -o-linear-gradient(top, #42d934, #2bb86d);
+  background-image: linear-gradient(to bottom, #42d934, #2bb86d);
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+button:hover {
+  background: #3cfc59;
+  background-image: -webkit-linear-gradient(top, #3cfc59, #4ad934);
+  background-image: -moz-linear-gradient(top, #3cfc59, #4ad934);
+  background-image: -ms-linear-gradient(top, #3cfc59, #4ad934);
+  background-image: -o-linear-gradient(top, #3cfc59, #4ad934);
+  background-image: linear-gradient(to bottom, #3cfc59, #4ad934);
+  text-decoration: none;
+}
+#login {
+    padding-top: 50px
+}
+#login .form-wrap {
+    width: 30%;
+    margin: 0 auto;
+}
+#login h1 {
+    color: #1fa67b;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 20px;
+}
+#login .form-group {
+    margin-bottom: 25px;
+}
+#login .checkbox {
+    margin-bottom: 20px;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+#login .checkbox.show:before {
+    content: '\e013';
+    color: #1fa67b;
+    font-size: 17px;
+    margin: 1px 0 0 3px;
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Glyphicons Halflings';
+}
+#login .checkbox .character-checkbox {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    display: inline-block;
+}
+#login .checkbox .label {
+    color: #6d6d6d;
+    font-size: 13px;
+    font-weight: normal;
+}
+#login .btn.btn-custom {
+    font-size: 14px;
+	margin-bottom: 20px;
+}
+#login .forget {
+    font-size: 13px;
+	text-align: center;
+	display: block;
+}
+
+/*    --------------------------------------------------
+	:: Inputs & Buttons
+	-------------------------------------------------- */
+.form-control {
+    color: #212121;
+}
+.btn-custom {
+    color: #fff;
+	background-color: #1fa67b;
+}
+.btn-custom:hover,
+.btn-custom:focus {
+    color: #fff;
+}
+
+/*    --------------------------------------------------
+    :: Footer
+	-------------------------------------------------- */
+#footer {
+    color: #6d6d6d;
+    font-size: 12px;
+    text-align: center;
+}
+#footer p {
+    margin-bottom: 0;
+}
+#footer a {
+    color: inherit;
+}

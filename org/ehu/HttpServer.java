@@ -486,7 +486,7 @@ public class HttpServer extends RouterNanoHTTPD {
           text = "{\"response\":\"invalid\",\"id\":\""+id+"\"}";
         }
       }
-      else if (dbi.auth(id,token).equals("admin") && cmd.equals("get")){
+      else if (dbi.authByToken(token).equals("admin") && cmd.equals("get")){
 
         text = dbi.getAuthData(id);
       }

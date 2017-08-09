@@ -9,44 +9,44 @@
         if(admin){
           var els = document.querySelectorAll('[role=two]');
           for(el in els){
-            els[el].className="ikusezin";
+            els[el].className="w3-hover-blue ikusezin";
           }
           var els = document.querySelectorAll('[role=one]');
           for(el in els){
-            els[el].className="";
+            els[el].className="w3-hover-blue";
           }
           var els = document.querySelectorAll('[role=session]');
           for(el in els){
-            els[el].className="";
+            els[el].className="w3-hover-blue";
           }
         }
         else {
           var els = document.querySelectorAll('[role=two]');
           for(el in els){
-            els[el].className="";
+            els[el].className="w3-hover-blue";
           }
           var els = document.querySelectorAll('[role=one]');
           for(el in els){
-            els[el].className="ikusezin";
+            els[el].className="w3-hover-blue ikusezin";
           }
           var els = document.querySelectorAll('[role=session]');
           for(el in els){
-            els[el].className="";
+            els[el].className="w3-hover-blue";
           }
         }
   }
   else {
     var els = document.querySelectorAll('[role=one]');
     for(el in els){
-      els[el].className="ikusezin";
+      els[el].className="w3-hover-blue ikusezin";
     }
     var els = document.querySelectorAll('[role=two]');
     for(el in els){
-      els[el].className="ikusezin";
+      els[el].className="w3-hover-blue ikusezin";
     }
     var els = document.querySelectorAll('[role=session]');
     for(el in els){
-      els[el].className="ikusezin";
+      els[el].className="w3-hover-blue ikusezin";
     }
       MoodRec.renderLogin(document.querySelector('#login1'));
   }
@@ -132,8 +132,7 @@
  var renderIkasleak = function (el){
     callBackend('/studentSkill/get/none/none/true/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting exercies");
-      var html = `<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleEzagupena')><img width=30 height=30 src="/browse/icons/add.png">Gehitu Ezagupena</span>
-      <span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/addUser.png'>Gehitu Erabiltzailea</span>`;
+      var html = `<span style='cursor:pointer' onclick=MoodRec.Panel.show('ikasleak')><img width='30' height='30' src='/browse/icons/addUser.png'>Gehitu Erabiltzailea</span>`;
        html +="<table  class='table'><tr><th>Id</th><th> Izena</th><th> Ezagupenak</th></tr>";
        res.result.forEach(function(ik){
           html+="<tr><td>"+ik._id.$oid+"</td><td>"+ik.name+"</td><td>";
@@ -167,7 +166,7 @@
 
  }
  var renderGomendioak = function (el){
-    callBackend('/studentSkill/getUserRecommendation/none/'+localStorage.getItem('user')+'/none/none/none/'+st.token,function(err,res){
+    callBackend('/studentSkill/getUserRecommendation/none/'+localStorage.getItem('user')+'/none/none/none/'+localStorage.getItem('token'),function(err,res){
       if (err) console.error("Error getting Recomendations");
       var html = "";
        html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
@@ -295,7 +294,10 @@
  var callBackend = function (url,cb){
     document.querySelector('#ariketak').className="ikusezin";
     if(url.indexOf('studentSkill')!=-1 || url.indexOf('admin')!=-1)
-    document.querySelector('#ikasleak').className="";
+      document.querySelector('#ikasleak').className="";
+    else
+      document.querySelector('#ikasleak').className="ikusezin";
+
     document.querySelector('#gaiak').className="ikusezin";
 
      var xmlhttp = new XMLHttpRequest();
@@ -346,7 +348,7 @@ sesioaItxi = function(){
      ariketakTemplate:`<div class="panel" id="pAriketak">
                       <span style='position:relative;top:0px;left:90%;color:green' onclick='MoodRec.Panel.hide()'> X </span>
                        <fieldset>
-                       <legend> Id (MoodleId)</legend>
+                       <legend> Id</legend>
                         <input id="arId" value="">
                        </fieldset>
                        <fieldset>
@@ -490,9 +492,9 @@ sesioaItxi = function(){
         }
       },
       selectMenu:function(el){
-          var menus = document.querySelector('ul').children;
+          var menus = Array.prototype.slice.call(document.querySelector('ul').children);
           for(m in menus){
-            if(menus[m].className)  menus[m].querySelector('span').className =  menus[m].querySelector('span').className.replace(/selected/,'');
+             menus[m].querySelector('span').className =  menus[m].querySelector('span').className.replace(/selected/,'');
           }
           el.className="selected";
       }
