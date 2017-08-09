@@ -42,7 +42,7 @@
                   <label for="ariketa" class="sr-only">Token</label>
                   <select  name="ariketa" id="ariketa" class="form-control" placeholder="Ariketa aukeraty">
                     <option selected disabled>Aukeratu ariketak</option>
-                
+
                   </select>
                 </div>
 
@@ -63,6 +63,9 @@
 </body>
 </html>
 <script>
+var check = setInterval(function(){
+if (MoodRec){
+clearInterval(check);
 MoodRec.callBackend('/exerciseAttr/get/none/none/none/none/none/none/none/none/auxtoken',function(err,res){
     if(err) console.error("Getting exercises groups");
     var exs = res.result;
@@ -78,4 +81,6 @@ MoodRec.callBackend('/exerciseAttr/get/none/none/none/none/none/none/none/none/a
        select.appendChild(opt);
     });
 });
+}
+},1000);
 </script>

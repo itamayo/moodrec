@@ -4,14 +4,14 @@
 // @version      0.1
 // @description  MoodRec for Moodle
 // @author       iñigo tamayo <tamaxx@gmail.com>
-// @match        http://localhost/moodle/mod/quiz/attempt.php?*
+// @match        http://192.168.1.111/moodle/mod/quiz/attempt.php?*
 // @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
     window.MoodRec = {};
-    MoodRec.backend = "http://localhost:8080";
+    MoodRec.backend = "http://localhost:8888";
     setTimeout(function(e){
      var questionId = document.querySelector('.questionflagpostdata').value;
      var ids = questionId.split('&')[2];
@@ -20,12 +20,24 @@
      var student = {};
      var studentInfo = document.querySelector('[title="View profile"]');
      var ex = {};
+     var st = {};
      student.name = studentInfo.innerHTML;
+     var tnp = student.name.split(" ");
+     student.surname = tnp[0][0] + tnp[1].toLowerCase();
      student.id = studentInfo.href.split("=")[1];
      console.log(student,"quiz_id",id);
-     MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none",function(err,res){
+     MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none/none/none/none/none/none/",function(err,res){
        if (err) {console.warn(err);}
        ex = res;
+      console.log("eXercises,",res);
+     });
+     if (student.name.indexOf("Admin")!=-1) student.name = "admin";
+     else
+     MoodRec.callBackend("/admin/get/"+ student.surname+"/true/ripcpsrlro3mfdjsaieoppsaa",function(err,res){
+       if (err) {console.warn(err);}
+       console.log(res);
+       st.user = res.id;
+       st.token = res.token;
 
      });
      document.querySelector('[type=submit],[value=next]').addEventListener('click',function(){
@@ -43,26 +55,32 @@
          var erantzuna = res.filter(function(el){if(el.checked)return true; else return false;})[0] || -1;*/
          if (res.value){
            console.log('bidalitako erantzuna',erantzuna);
+           console.log(ex);
            console.log(ex.skill);
+           console.log(st.user,st.token);
            erantzuna = encodeURIComponent(erantzuna);
-           MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/58d7e8755984581023fcb8e3/"+erantzuna+"/"+id,function(err,res){
+           MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/"+st.user+"/"+erantzuna+"/"+id+"/"+ex.bktP+"/"+st.token,function(err,res){
            if (err) {console.warn("error",err);}
            else {
             //MoodRec.showRecommendations("58d7e8755984581023fcb8e3")
-              if (res.pknow<0.51)
-                  MoodRec.callBackend('/subject/getRecommendation/none/'+ex.spaceVector+'/none',function(err,res){
+               console.warn("getting recomendation",res);
+
+                  MoodRec.callBackend('/studentSkill/getUserRecommendation/none/'+st.user+'/none/none/none/'+st.token,function(err,res){
+                  if (err) console.warn("getting recomendation");
                   localStorage.setItem("docs",JSON.stringify(res));
                   MoodRec.showRecommendations(res);
               });
-              else {
-                   localStorage.setItem("docs",'{}');
-              }
+
+
             console.log(res);
            }
          });
      }
      });
-     if (student.name=="Admin User")setMoodRecQuestion(id);
+        console.log(student.name);
+     if (student.name=="admin"){
+         setMoodRecQuestion(id);
+     }
      else {
           var docs = JSON.parse(localStorage.getItem('docs'));
           if (docs) MoodRec.showRecommendations(docs);
@@ -90,6 +108,8 @@
          var html = "<p> Galdera ID:"+id+"</p><p><input id='erantzunZuzena' placeholder='erantzuna zuzena idatzi'></p>";
          html += "<p> Ezagupen bektorea idatzi</p><p><input id='bektoreEz' placeholder='oinarrizko prob, bayes, prob. kondizionala'></p>";
          html += "<p> Ezagupen bektorea normalizatua</p><p><input id='bektoreaNorm' placeholder='0.4, 0.2,0.4'></p>";
+         html += "<p> Bkt Parametroak</p><p><input id='bktP' placeholder='0.4, 0.2,0.4,0.3'></p>";
+
          panel.innerHTML += html;
          var bidaliB = document.createElement('button');
          bidaliB.innerHTML = "Bidali";
@@ -97,10 +117,23 @@
         bidaliB.onclick= function (){
           var _id = id;
           var skill = document.querySelector('#bektoreEz').value;
+          var btkP = document.querySelector('#bktP').value;
           var sv = document.querySelector('#bektoreaNorm').value;
           var er = document.querySelector('#erantzunZuzena').value;
+          var q = document.querySelector('.qtext p span').innerHTML;
+          var group = document.querySelector('[title=Quiz]').innerHTML;
+          q=q.replace(":","");
+          q=q.replace("?","");
+          var  ans = document.querySelector('.answer').children;
+          var answers = [];
+            ans = Array.prototype.slice.call(ans);
+          for (var a in ans) {
+              answers.push(ans[a].querySelector('label').innerHTML);
+          }
+          answers = answers.join(',');
+          console.log(answers);
           er = encodeURIComponent(er);
-          MoodRec.callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill+'/'+er,function(err,result){
+          MoodRec.callBackend('/exerciseAttr/create/'+_id+'/'+sv+'/'+skill+'/'+q+'/'+answers+'/'+er+'/'+group+'/'+btkP+'/ripcpsrlro3mfdjsaieoppsaa',function(err,result){
             if(err) console.error("Error saving",err);
             alert("Ondo gorde da");
           });

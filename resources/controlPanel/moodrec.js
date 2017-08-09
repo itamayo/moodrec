@@ -167,7 +167,7 @@
 
  }
  var renderGomendioak = function (el){
-    callBackend('/studentSkill/getUserRecommendation/none/'+localStorage.getItem('user')+'/none/none/none/'+localStorage.getItem('token'),function(err,res){
+    callBackend('/studentSkill/getUserRecommendation/none/'+localStorage.getItem('user')+'/none/none/none/'+st.token,function(err,res){
       if (err) console.error("Error getting Recomendations");
       var html = "";
        html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
