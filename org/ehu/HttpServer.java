@@ -47,7 +47,9 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.*;
 import java.util.Properties;
-
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
 import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.response.IStatus;
 import org.nanohttpd.protocols.http.response.Response;
@@ -359,7 +361,58 @@ public class HttpServer extends RouterNanoHTTPD {
       return response;
     }
 
+    public Response post(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+      DBInterface dbi = new DBInterface();
+      String token = urlParams.get("token");
+      String auth = dbi.authByToken(token);
+      System.out.println("TOKEN "+token);
+      Map<String, String> files = new HashMap<String, String>();
+      System.out.println("POST request");
+      String text = new String("{\"result\":\"ok\"}");
+      int size = text.getBytes().length;
+/*      System.out.println("Working Directory = " +
+              System.getProperty("user.dir"));*/
+      try { session.parseBody(files); }
+      catch (IOException e1) { e1.printStackTrace(); }
+      catch (ResponseException e1) { e1.printStackTrace(); }
+      String extraData = session.getParameters().get("extradata").get(0);
+      System.out.println("filename "+extraData );
+      File file = new File(files.get("gDoc"));
+      File dst = new File("./resources/tutos/", extraData);
+        if (dst.exists()) {
+            // Response for confirm to overwrite
+        }
+
+        try {
+            InputStream in = new FileInputStream(file);
+            OutputStream out = new FileOutputStream(dst);
+            byte[] buf = new byte[65536];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        } catch (IOException ioe) {
+
+          System.out.println("Error "+ioe.toString());
+        }
+        String id = session.getParameters().get("gIzena").get(0);
+        String vector = session.getParameters().get("gSpaceVector").get(0);
+        String doc = session.getParameters().get("extradata").get(0);
+        String skills = session.getParameters().get("gSkills").get(0);
+        String _id = dbi.addSubject(id,skills,vector,doc);
+        text = new String("{\"response\":\"subject added\",\"id\":\""+_id+"\"}");
+
+      ByteArrayInputStream inp = new ByteArrayInputStream(text.getBytes());
+      Response response = Response.newFixedLengthResponse(getStatus(), getMimeType(), inp, size);
+
+      return response;
+    }
+
+
   }
+
   public static class ExerciseAttributesHandler extends DefaultHandler {
 
     @Override
@@ -555,13 +608,6 @@ public class HttpServer extends RouterNanoHTTPD {
   public static void run () {
     ServerRunner.run(HttpServer.class);
   }
-  private static double[] push(double[] array, double push) {
-    double[] longer = new double[array.length + 1];
-    System.out.println("Pushing "+push);
-    for (int i = 0; i < array.length; i++)
-    longer[i] = array[i];
-    longer[array.length] = push;
-    return longer;
-  }
+
 
 }

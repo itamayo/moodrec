@@ -156,7 +156,7 @@
       var html = "<span style='cursor:pointer' onclick=MoodRec.Panel.show('gaiak')><img width='30' height='30' src='/browse/icons/add.png'>Gehitu Gaia</span>";
        html +="<table  class='table'><tr><th>Izena</th><th> Doc</th><th> Ezagupenak</th><th> Bektorea</th></tr>";
        res.result.forEach(function(gaia){
-          html+="<tr><td>"+gaia.id+"</td><td>"+gaia.docs+"</td><td>"+gaia.skills+"</td><td>"+gaia.spaceVector+"</td><td onclick=MoodRec.remove('"+gaia._id.$oid+"','gaia')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
+          html+="<tr><td>"+gaia.id+"</td><td><a href='/browse/tutos/"+gaia.docs+"' target=_blanck>"+gaia.docs+"</a></td><td>"+gaia.skills+"</td><td>"+gaia.spaceVector+"</td><td onclick=MoodRec.remove('"+gaia._id.$oid+"','gaia')><img width='30' height='30' src='/browse/icons/remove.png'></td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -171,7 +171,7 @@
       var html = "";
        html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
        res.docs.forEach(function(rc){
-          html+="<tr><td>"+rc.docs[0]+"</td><td>"+rc.sim+"</td></tr>";
+          html+="<tr><td><a href='/browse/tutos/"+rc.docs[0]+"' target=_blanck>"+rc.docs[0]+"</a></td><td>"+rc.sim+"</td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -203,7 +203,7 @@
       var html = "<span style='position:relative;top:0px;left:90%;color:green;' onclick='MoodRec.Panel.hide()'> X </span>";
        html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
        res.docs.forEach(function(rc){
-          html+="<tr><td>"+rc.docs[0]+"</td><td>"+rc.sim+"</td></tr>";
+          html+="<tr><td><a href='/browse/tutos/"+rc.docs[0]+"' target=_blanck>"+rc.docs[0]+"</a></td><td>"+rc.sim+"</td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -313,6 +313,22 @@
      xmlhttp.open("GET", MoodRec.backend+url, true);
      xmlhttp.send();
  }
+ var uploadDocument = function (url,cb){
+       var xmlhttp = new XMLHttpRequest();
+     var formData = new FormData(docs);
+     xmlhttp.onreadystatechange = function() {
+         console.log(this.readyState,this.status);
+         if (this.readyState == 4 && this.status == 200) {
+             var myArr = JSON.parse(this.responseText);
+             if (cb) cb(null,myArr);
+             MoodRec.Panel.hide();
+             MoodRec.renderGaiak(document.querySelector('#gaiak'));
+         }
+         else if (this.status == 404 || this.status == 400) cb("Not good response",this.status);
+     };
+     xmlhttp.open("post", MoodRec.backend+url, true);
+     xmlhttp.send(formData);
+ }
 sesioaItxi = function(){
   localStorage.user="";
   localStorage.token="";
@@ -382,25 +398,27 @@ sesioaItxi = function(){
                        <button onclick="MoodRec.Panel.save('ariketa')"> Gorde</button>
                        </div>`,
      gaiakTemplate:`<div class="panel" id="pGaiak">
+                    <form  name="docs" method="post" enctype="multipart/form-data" action="/subject/create/none/none/none/none/ripcpsrlro3mfdjsaieoppsaa">
                     <span style='position:relative;top:0px;left:90%;color:green' onclick='MoodRec.Panel.hide()'> X </span>
                        <fieldset>
                        <legend> Izena</legend>
-                        <input id="gIzena" value="" placeholder="Estadistika">
+                        <input id="gIzena" name="gIzena" value="" placeholder="Estadistika">
                        </fieldset>
                        <fieldset>
                        <legend> Doc</legend>
-                        <input id="gDoc" placeholder="doc.pdf">
+                        <input type="file" name="gDoc" id="gDoc" placeholder="doc.pdf" >
+                        <input type="hidden" name="extradata" id="extradata" value="test.pdf"/>
                        </fieldset>
                         <fieldset>
-                        <fieldset>
                         <legend> Ezagupenak (Bek.)</legend>
-                         <input id="gSkills" placeholder="biderkaketa,zatiketa">
+                         <input id="gSkills" name="gSkills" placeholder="biderkaketa,zatiketa">
                         </fieldset>
                          <fieldset>
                        <legend> Doc Bektorea</legend>
-                        <input id="gSpaceVector" placeholder="0.4,0.3,0.3">
+                        <input id="gSpaceVector" name="gSpaceVector" placeholder="0.4,0.3,0.3">
                        </fieldset>
-                       <button onclick="MoodRec.Panel.save('gaia')"> Gehitu</button>
+                       <button type="button" onclick="MoodRec.uploadDocument('/subject/create/none/none/none/none/ripcpsrlro3mfdjsaieoppsaa');"> Gehitu</button>
+                       </form>
                        </div>`,
        gmTemplate:`<div class="panel" id="gm">
                          </div>`,
@@ -421,6 +439,11 @@ sesioaItxi = function(){
              var x = document.querySelector('.panel');
              if (x) document.body.removeChild(x);
              document.body.innerHTML += this.gaiakTemplate;
+             document.querySelector('#gDoc').onchange = function(event){
+                var file =document.querySelector('#gDoc').value;
+                document.querySelector('#extradata').value = file.split("\\")[file.split("\\").length-1];
+             }
+
           }
           if (id=="ariketak"){
              var x = document.querySelector('.panel');
@@ -510,6 +533,7 @@ sesioaItxi = function(){
       "renderGaiak":renderGaiak,
       "renderLogin":renderLogin,
       "renderGomendioak":renderGomendioak,
+      "uploadDocument":uploadDocument,
       "showUserRecommendation":showUserRecommendation,
       "checkLogin":checkLogin,
       "login":login,
