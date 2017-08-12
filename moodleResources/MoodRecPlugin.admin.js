@@ -15,7 +15,7 @@
     if (document.location.href.split('moodle')[1].length==1 || document.location.href.indexOf("login")!=-1) MoodRec.run=false;
     else MoodRec.run = true;
     if (MoodRec.run){
-    MoodRec.backend = "http://localhost:8888";
+    MoodRec.backend = "http://donostian.eus:8888";
     setTimeout(function(e){
      var st = {};
      var student = {};
@@ -68,12 +68,12 @@
            console.log(ex.skill);
            console.log(st.user,st.token);
            erantzuna = encodeURIComponent(erantzuna);
-           MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/"+st.user+"/"+erantzuna+"/"+id+"/"+ex.bktP+"/"+st.token,function(err,res){
+           MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/"+MoodRec.user+"/"+erantzuna+"/"+id+"/"+ex.bktP+"/"+MoodRec.token,function(err,res){
            if (err) {console.warn("error",err);}
            else {
                console.warn("getting recomendation",res);
 
-                  MoodRec.callBackend('/studentSkill/getUserRecommendation/none/'+st.user+'/none/none/none/'+st.token,function(err,res){
+                  MoodRec.callBackend('/studentSkill/getUserRecommendation/none/'+MoodRec.user+'/none/none/none/'+MoodRec.token,function(err,res){
                   if (err) console.warn("getting recomendation");
                   localStorage.setItem("docs",JSON.stringify(res));
                   MoodRec.showRecommendations(res);
