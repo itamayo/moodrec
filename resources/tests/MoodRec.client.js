@@ -51,7 +51,7 @@
             txt.parentNode.innerHTML+=o;
             opt.setAttribute("exId",e.id);
             opt.setAttribute("skills",e.subjects);
-            opt.setAttribute("btkP",e.btkParameters || 'none');
+            opt.setAttribute("bktP",e.bktParameters || 'none');
             exercises.push(opt);
           });
           var len = 4 - (4 - opts.length);
@@ -78,7 +78,7 @@
         if (ex.id == target.id){
           ex1.skill = ex.getAttribute('skills');
           ex1.id = ex.getAttribute('exId');
-          ex1.btkP = ex.getAttribute('btkP');
+          ex1.bktP = ex.getAttribute('bktP');
           ex1.ans = target.value;
         }
       });
@@ -90,7 +90,7 @@
 
   var getResults = function (ex){
     var div = document.querySelector('.console');
-    MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/"+localStorage.getItem('user')+"/"+ex.ans+"/"+ex.id+"/"+ex.btkP+"/"+localStorage.getItem('token'),function(err,res){
+    MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/"+localStorage.getItem('user')+"/"+ex.ans+"/"+ex.id+"/"+ex.bktP+"/"+localStorage.getItem('token'),function(err,res){
       if (err) {console.warn(err);}
       else {
         var skills = res;
