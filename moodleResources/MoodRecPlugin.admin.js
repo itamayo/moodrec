@@ -5,39 +5,48 @@
 // @description  MoodRec for Moodle
 // @author       iñigo tamayo <tamaxx@gmail.com>
 // @match        http://192.168.1.111/moodle/mod/quiz/attempt.php?*
+// @include      http://192.168.1.111/moodle/*
 // @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
     window.MoodRec = {};
+    if (document.location.href.split('moodle')[1].length==1 || document.location.href.indexOf("login")!=-1) MoodRec.run=false;
+    else MoodRec.run = true;
+    if (MoodRec.run){
     MoodRec.backend = "http://localhost:8888";
     setTimeout(function(e){
-     var questionId = document.querySelector('.questionflagpostdata').value;
-     var ids = questionId.split('&')[2];
-     console.log(ids);
-     var id = ids.split('=')[1];
+     var st = {};
      var student = {};
      var studentInfo = document.querySelector('[title="View profile"]');
-     var ex = {};
-     var st = {};
+
      student.name = studentInfo.innerHTML;
      var tnp = student.name.split(" ");
      student.surname = tnp[0][0] + tnp[1].toLowerCase();
      student.id = studentInfo.href.split("=")[1];
-     console.log(student,"quiz_id",id);
-     MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none/none/none/none/none/none/",function(err,res){
-       if (err) {console.warn(err);}
-       ex = res;
-      console.log("eXercises,",res);
-     });
+     if ( document.location.href.indexOf("attempt")!=-1){
+         var questionId = document.querySelector('.questionflagpostdata').value;
+         var ids = questionId.split('&')[2];
+         console.log(ids);
+         var id = ids.split('=')[1];
+         var ex = {};
+
+         console.log(student,"quiz_id",id);
+         MoodRec.callBackend("/exerciseAttr/get/"+id+"/none/none/none/none/none/none/none/none/",function(err,res){
+             if (err) {console.warn(err);}
+             ex = res;
+             console.log("eXercises,",res);
+         });
+     }
      if (student.name.indexOf("Admin")!=-1) student.name = "admin";
      else
      MoodRec.callBackend("/admin/get/"+ student.surname+"/true/ripcpsrlro3mfdjsaieoppsaa",function(err,res){
        if (err) {console.warn(err);}
        console.log(res);
-       st.user = res.id;
-       st.token = res.token;
+       MoodRec.user = res.id;
+       MoodRec.token = res.token;
+       MoodRec.showRecommendations();
 
      });
      document.querySelector('[type=submit],[value=next]').addEventListener('click',function(){
@@ -62,7 +71,6 @@
            MoodRec.callBackend("/studentSkill/update/"+ex.skill+"/"+st.user+"/"+erantzuna+"/"+id+"/"+ex.bktP+"/"+st.token,function(err,res){
            if (err) {console.warn("error",err);}
            else {
-            //MoodRec.showRecommendations("58d7e8755984581023fcb8e3")
                console.warn("getting recomendation",res);
 
                   MoodRec.callBackend('/studentSkill/getUserRecommendation/none/'+st.user+'/none/none/none/'+st.token,function(err,res){
@@ -82,10 +90,11 @@
          setMoodRecQuestion(id);
      }
      else {
-          var docs = JSON.parse(localStorage.getItem('docs'));
-          if (docs) MoodRec.showRecommendations(docs);
+         console.log(st);
+
      }
      },1500);
+    }
     function setMoodRecQuestion (id){
          var panel = document.createElement('div');
          var title = document.createElement('div');
@@ -143,12 +152,18 @@
         document.body.appendChild(panel);
     };
     window.MoodRec.showRecommendations = function (data){
+         if (!data)
+             MoodRec.callBackend('/studentSkill/getUserRecommendation/none/'+MoodRec.user+'/none/none/none/'+MoodRec.token,function(err,res){
+                  if (err) console.warn("getting recomendation");
+                  localStorage.setItem("docs",JSON.stringify(res));
+                  MoodRec.showRecommendations(res);
+              });
          var panel = document.querySelector('#recPanel');
          if (panel){
               var html = "";
              panel.innerHTML ="";
              data.docs.forEach(function(doc){
-                 html+="<p> <a href='#'>" + doc.docs.join(',')+"</a></p>";
+                 html+="<p> <a href='"+MoodRec.backend+"/browse/tutos/"+doc.docs.join(',')+"'>" + doc.docs.join(',')+"</a></p>";
              });
              panel.innerHTML += html;
              document.body.appendChild(panel);
@@ -175,8 +190,8 @@
          panel.style.border="1px solid black";
 
          var html = "";
-         data.docs.forEach(function(doc){
-             html+="<p> <a href='#'>" + doc.docs.join(',')+"</a></p>";
+         if (data) data.docs.forEach(function(doc){
+             html+="<p> <a href='"+MoodRec.backend+"/browse/tutos/"+doc.docs.join(',')+"'>"  + doc.docs.join(',')+"</a></p>";
          });
          panel.innerHTML += html;
         document.body.appendChild(panel);
