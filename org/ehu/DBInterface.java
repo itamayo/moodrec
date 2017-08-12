@@ -223,12 +223,13 @@ public String getStudent (String id){
 public String getAllStudent (){
   MongoCursor<Document> cursor = studentSkills.find().iterator();
   String json = "{\"result\":[";
+  boolean hasOne = false;
   while (cursor.hasNext()){
     Document c = (Document)cursor.next();
     json +=c.toJson()+",";
-
+    hasOne = true;
   }
-  json = json.substring(0,json.length()-1);
+  if (hasOne)json = json.substring(0,json.length()-1);
   json+="]}";
   return json;
 }
@@ -773,13 +774,14 @@ public String removeSubject (String id){
 */
 public String getAllSubjects (){
   MongoCursor<Document> cursor = subject.find().iterator();
+  boolean hasOne = false;
   String json = "{\"result\":[";
   while (cursor.hasNext()){
     Document c = (Document)cursor.next();
     json +=c.toJson()+",";
-
+    hasOne = true;
   }
-  json = json.substring(0,json.length()-1);
+  if (hasOne) json = json.substring(0,json.length()-1);
   json+="]}";
   return json;
 }
@@ -816,12 +818,13 @@ public String removeExercise (String id){
 public String getExerciseAttr (){
   MongoCursor<Document> cursor = exerciseAttr.find().iterator();
   String json = "{\"result\":[";
+  boolean hasOne = false;
   while (cursor.hasNext()){
     Document c = (Document)cursor.next();
     json +=c.toJson()+",";
-
+    hasOne = true;
   }
-  json = json.substring(0,json.length()-1);
+  if (hasOne) json = json.substring(0,json.length()-1);
   json+="]}";
   return json;
 }
