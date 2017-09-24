@@ -180,7 +180,7 @@
     "getResults":getResults,
     "closeSession":closeSession,
     "getExercicesGroups":getExercicesGroups,
-    "backend":"http://localhost:8888"
+    "backend":"http://donostian.eus:8888"
   }
 
   scope.MoodRec = API;

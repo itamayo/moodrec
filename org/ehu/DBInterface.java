@@ -277,11 +277,13 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
     double sim = 0.0;
     ArrayList<String>  docs;
     String skills;
+    String name;
 
-    public similarities(double s,ArrayList<String> d,String sk){
+    public similarities(double s,ArrayList<String> d,String sk,String name){
       this.sim =s;
       this.docs = d;
       this.skills = sk;
+      this.name = name;
     }
     @Override
     public int compareTo(similarities s1) {
@@ -298,7 +300,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
         String tnp = (String)sbj.get("spaceVector");
         String skills = (String)sbj.get("skills");
         String []  doc_skills = skills.split(",");
-        System.out.println("doc_skills"+doc_skills[0]);
+        System.out.println("doc_skills"+doc_skills[0]+(String)sbj.get("id"));
         /* check length of docs knows and user skills in other having same vector length*/
         if (knowns.length>=doc_skills.length){
           /* Init ouput vector to need dimension */
@@ -325,12 +327,13 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
          for (int j=0;j<doc_skills.length;j++){
            knowns_vector.add(j,new Double(0.0));
          }
-         for (int i = 0; i<doc_skills.length;i++){
-           int ind = Arrays.asList(knowns).indexOf(doc_skills[i]);
-           if ( ind!=-1){
-               knowns_vector.add(ind,new Double(vector[ind]));
+         for (int i = 0; i<knowns.length;i++){
+	   for (int x = 0 ; x<doc_skills.length;x++){
+		if (doc_skills[x].equals(knowns[i])) knowns_vector.add(x,new Double(vector[i]));
+		else knowns_vector.add(x,new Double(0.0));
+ 
+			
            }
-           else knowns_vector.add(new Double(0.0));
          }
        }
         ArrayList<String> docs = (ArrayList<String>) sbj.get("docs");
@@ -343,7 +346,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
         double sim = vectorSpaceModel.getSimilarity(vec1,knowns_vector1);
         System.out.println(sim);
         if (sim>0.09){
-           sims.add(new similarities(sim,docs,skills));
+           sims.add(new similarities(sim,docs,skills,(String)sbj.get("id")));
 
         }
     }
@@ -357,7 +360,7 @@ public String getRelatedSubjectByPknows (double [] vector,String[] knowns){
  for(similarities sim:sims){
    System.out.println(sim.docs);
    System.out.println(sim.sim);
-   result+="{\"sim\":"+sim.sim+",\"skills\":\""+sim.skills+"\",\"docs\":[";
+   result+="{\"name\":\""+sim.name+"\",\"sim\":"+sim.sim+",\"skills\":\""+sim.skills+"\",\"docs\":[";
    for(String doc:sim.docs){
      result+="\""+doc+"\",";
    }

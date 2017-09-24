@@ -171,7 +171,7 @@
       var html = "";
        html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
        res.docs.forEach(function(rc){
-          html+="<tr><td><a href='/browse/tutos/"+rc.docs[0]+"' target=_blanck>"+rc.docs[0]+"</a></td><td>"+rc.sim+"</td></tr>";
+         if(rc.sim>0.40)  html+="<tr><td><a href='/browse/tutos/"+rc.docs[0]+"' target=_blanck>"+rc.name+"</a></td><td>"+rc.sim+"</td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -202,8 +202,8 @@
       if (err) console.error("Error getting Recomendations");
       var html = "<span style='position:relative;top:0px;left:90%;color:green;' onclick='MoodRec.Panel.hide()'> X </span>";
        html +="<table  class='table'><tr><th>Doc</th><th> Sim</th></tr>";
-       res.docs.forEach(function(rc){
-          html+="<tr><td><a href='/browse/tutos/"+rc.docs[0]+"' target=_blanck>"+rc.docs[0]+"</a></td><td>"+rc.sim+"</td></tr>";
+      res.docs.forEach(function(rc){
+          html+="<tr><td><a href='/browse/tutos/"+rc.docs[0]+"' target=_blanck>"+rc.name+"</a></td><td>"+rc.sim+"</td></tr>";
        })
        html+="</table>";
        el.innerHTML = html;
@@ -541,7 +541,7 @@ sesioaItxi = function(){
       "SesioaItxi":sesioaItxi,
       "Panel": new Panel(),
       "remove":remove,
-      "backend":"http://localhost:8888"
+      "backend":"http://donostian.eus:8888"
   }
   //document.addEventListener('DOMContentLoaded',mapExercises.bind(this));
   scope.MoodRec = API;
