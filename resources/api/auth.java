@@ -2,7 +2,7 @@
  * @api {get} /admin/:cmd/:id/:admin/:token Authentification service
  * @apiName AuthMod
  * @apiGroup Auth
- * @apiSampleRequest http://donostian.eus:8888/
+ * @apiSampleRequest http://donostian.eus:8888/admin/
  * @apiParam {String} cmd Operation could be: create,login,remove.
  * @apiParam {number} id  if login or remove called, id should be user id.
  * @apiParam {Boolean} admin  whether user is admin or not

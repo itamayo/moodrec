@@ -2,7 +2,7 @@
  * @api {get} /student/:cmd/:id/:admin/:token Student Managment
  * @apiName StudentMod
  * @apiGroup Student
- * @apiSampleRequest http://donostian.eus:8888/
+ * @apiSampleRequest http://donostian.eus:8888/student/
  * @apiParam {String} cmd Operation could be: get,remove,create.
  * @apiParam {String} id  id should be student id, if want get all users, use id 'none'.
  * @apiParam {String} admin to create admin user or not

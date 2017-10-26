@@ -2,7 +2,7 @@
  * @api {get} /exerciseAttr/:cmd/:id/:vector/:subjects/:question/:answers/:answer/:group/:bktParams/:token Exercises managment
  * @apiName ExercisesMod
  * @apiGroup Exercise
- * @apiSampleRequest http://donostian.eus:8888/
+ * @apiSampleRequest http://donostian.eus:8888/exerciseAttr/
  * @apiParam {String} cmd Operation could be: create,get,remove,compare.Compare is for get similarity with subjects.
  * @apiParam {number} id  should be exercises id, create case should be 'none'.To get all exercises info just set id to 'none'
  * @apiParam {String} vector exercises vector 0.3,0.4,0.3
