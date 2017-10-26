@@ -7,7 +7,7 @@ define({ "api": [
     "group": "Auth",
     "sampleRequest": [
       {
-        "url": "http://donostian.eus:8888/"
+        "url": "http://donostian.eus:8888/admin/"
       }
     ],
     "parameter": {
@@ -117,7 +117,7 @@ define({ "api": [
     "group": "Exercise",
     "sampleRequest": [
       {
-        "url": "http://donostian.eus:8888/"
+        "url": "http://donostian.eus:8888/exerciseAttr/"
       }
     ],
     "parameter": {
@@ -228,7 +228,7 @@ define({ "api": [
     "group": "StudentSkill",
     "sampleRequest": [
       {
-        "url": "http://donostian.eus:8888/"
+        "url": "http://donostian.eus:8888/studentSkill/"
       }
     ],
     "parameter": {
@@ -318,7 +318,7 @@ define({ "api": [
     "group": "Student",
     "sampleRequest": [
       {
-        "url": "http://donostian.eus:8888/"
+        "url": "http://donostian.eus:8888/admin/login/admin/true/ripcpsrlro3mfdjsaieoppsaa"
       }
     ],
     "parameter": {
@@ -444,7 +444,7 @@ define({ "api": [
     "group": "Subject",
     "sampleRequest": [
       {
-        "url": "http://donostian.eus:8888/"
+        "url": "http://donostian.eus:8888/subject/"
       }
     ],
     "parameter": {
