@@ -7,7 +7,7 @@ define({ "api": [
     "group": "Auth",
     "sampleRequest": [
       {
-        "url": "http://donostian.eus:8888/admin/"
+        "url": "http://donostian.eus:8888/admin/login/admin/true/ripcpsrlro3mfdjsaieoppsaa"
       }
     ],
     "parameter": {
